@@ -30,6 +30,8 @@ function App() {
     const [analyzeResponse, setAnalyzeResponse] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedCriteria, setSelectedCriteria] = useState([]);
+    const [detailsOpen, setDetailsOpen] = useState(false);
+    const [detailsItem, setDetailsItem] = useState(null);
 
     const SNIPPET_LENGTH = 2000;
 
@@ -82,6 +84,17 @@ function App() {
     const handleNextStep = () => {
         setDialogOpen(false);
         setStep(1); // Move to "Select Criteria"
+    };
+
+    // Handler for viewing details
+    const handleViewDetails = (item) => {
+        setDetailsItem(item);
+        setDetailsOpen(true);
+    };
+
+    const handleDetailsClose = () => {
+        setDetailsOpen(false);
+        setDetailsItem(null);
     };
 
     // Parse analyzeResponse as JSON if on step 1
@@ -199,15 +212,26 @@ function App() {
                 </>
             ) : step === 1 ? (
                 <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
-                    {/* <h2>Select Criteria</h2> */}
                     <h3>Relevant GPP Documents</h3>
                     {/* Show Documents */}
                     {parsedResponse?.relevantGppDocuments?.length > 0 && (
                         <Paper sx={{ mb: 3, p: 2, background: "#f9f9f9" }}>
-                            {/* <h3>Relevant GPP Documents</h3> */}
                             <List>
                                 {parsedResponse.relevantGppDocuments.map((doc) => (
-                                    <ListItem key={doc.name} alignItems="flex-start" disableGutters>
+                                    <ListItem
+                                        key={doc.name}
+                                        alignItems="flex-start"
+                                        disableGutters
+                                        secondaryAction={
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                onClick={() => handleViewDetails(doc)}
+                                            >
+                                                View Details
+                                            </Button>
+                                        }
+                                    >
                                         <ListItemText primary={doc.name} secondary={doc.summary} />
                                     </ListItem>
                                 ))}
@@ -218,23 +242,38 @@ function App() {
                     <h3>Suggested GPP Criteria</h3>
                     <p>Please select the criteria that you wish to insert into the notice.</p>
                     <Paper sx={{ p: 2 }}>
-                        {/* <h3>Suggested GPP Criteria</h3> */}
                         <List>
                             {parsedResponse?.suggestedGppCriteria?.map((crit) => (
                                 <div key={crit.id}>
                                     <ListItem
                                         secondaryAction={
-                                            <Checkbox
-                                                edge="end"
-                                                onChange={() => handleToggleCriterion(crit.id)}
-                                                checked={selectedCriteria.includes(crit.id)}
-                                            />
+                                            <>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{ mr: 1 }}
+                                                    onClick={() => handleViewDetails(crit)}
+                                                >
+                                                    View Details
+                                                </Button>
+                                                <Checkbox
+                                                    edge="end"
+                                                    onChange={() => handleToggleCriterion(crit.id)}
+                                                    checked={selectedCriteria.includes(crit.id)}
+                                                />
+                                            </>
                                         }
                                         disablePadding
                                     >
                                         <ListItemText
                                             primary={`${crit.id}: ${crit.name}`}
-                                            secondary={`Lot: ${crit.lotId}`}
+                                            secondary={
+                                                <>
+                                                    Lot: {crit.lotId}
+                                                    <br />
+                                                    Ambition Level: {crit.ambitionLevel}
+                                                </>
+                                            }
                                         />
                                     </ListItem>
                                     <Divider />
@@ -242,6 +281,20 @@ function App() {
                             ))}
                         </List>
                     </Paper>
+                    {/* Details Dialog */}
+                    <Dialog open={detailsOpen} onClose={handleDetailsClose} maxWidth="sm" fullWidth>
+                        <DialogTitle>Details</DialogTitle>
+                        <DialogContent dividers>
+                            {detailsItem && (
+                                <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: "1rem" }}>
+                                    {JSON.stringify(detailsItem, null, 2)}
+                                </pre>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDetailsClose}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
             ) : (
                 <div className="dummy-page">
