@@ -215,7 +215,7 @@ function App() {
                     <h3>Relevant GPP Documents</h3>
                     {/* Show Documents */}
                     {parsedResponse?.relevantGppDocuments?.length > 0 && (
-                        <Paper sx={{ mb: 3, p: 2, background: "#f9f9f9" }}>
+                        <Paper sx={{ mb: 3, p: 2, background: " #999999 " /* slightly more gray */ }}>
                             <List>
                                 {parsedResponse.relevantGppDocuments.map((doc) => (
                                     <div key={doc.name}>
@@ -224,7 +224,7 @@ function App() {
                                                 mb: 2,
                                                 borderRadius: 2,
                                                 boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                                background: "#fff",
+                                                background: "#d3d3d3", // just a little gray
                                                 border: "1px solid #e0e7ef",
                                                 transition: "box-shadow 0.2s",
                                                 "&:hover": {
@@ -272,7 +272,7 @@ function App() {
                     {/* Show Criteria */}
                     <h3>Suggested GPP Criteria</h3>
                     <p>Please select the criteria that you wish to insert into the notice.</p>
-                    <Paper sx={{ p: 2, background: "#f5f7fa" }}>
+                    <Paper sx={{ p: 2, background: "#999999" /* slightly more gray */ }}>
                         <List>
                             {parsedResponse?.suggestedGppCriteria?.map((crit) => (
                                 <div key={crit.id}>
@@ -281,7 +281,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#fff",
+                                            background: "#d3d3d3", // just a little gray
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -339,7 +339,13 @@ function App() {
                         </List>
                     </Paper>
                     {/* Details Dialog */}
-                    <Dialog open={detailsOpen} onClose={handleDetailsClose} maxWidth="sm" fullWidth>
+                    <Dialog
+                        open={detailsOpen}
+                        onClose={handleDetailsClose}
+                        maxWidth="sm"
+                        fullWidth
+                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                    >
                         <DialogTitle>Details</DialogTitle>
                         <DialogContent dividers>
                             {detailsItem && (
@@ -360,7 +366,7 @@ function App() {
                 </div>
             )}
             {/* Analyze Notice Dialog */}
-            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+            <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: { background: "#d3d3d3" } }}>
                 <DialogTitle>Notice Analysis Result</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ whiteSpace: "pre-wrap" }}>
