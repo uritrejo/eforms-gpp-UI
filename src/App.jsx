@@ -7,18 +7,30 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 
-const steps = ["Upload", "Patch", "Download"];
+const steps = ["Upload Notice", "Patch", "Download"];
 
 function App() {
     const [step, setStep] = useState(0);
     const [status, setStatus] = useState("Waiting for file...");
     const [selectedFile, setSelectedFile] = useState(null);
+    const [fileSnippet, setFileSnippet] = useState("");
+
+    const SNIPPET_LENGTH = 2000;
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setSelectedFile(file);
             setStatus(`Loaded file: ${file.name}`);
+
+            // Read file and set snippet
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const text = event.target.result;
+                // Show first SNIPPET_LENGTH chars (or less)
+                setFileSnippet(text.slice(0, SNIPPET_LENGTH));
+            };
+            reader.readAsText(file);
         }
     };
 
@@ -29,9 +41,7 @@ function App() {
     return (
         <div className="homepage-container">
             <h1>eForms GPP UI</h1>
-            <p className="description">
-                Easily upload and patch your procurement notice XML files in a few simple steps.
-            </p>
+            <p className="description">Identify GPP criteria and apply them to your eForm notice.</p>
             {/* Material UI Stepper */}
             <Box sx={{ width: "100%", mb: 3 }}>
                 <Tabs value={step} onChange={(_, newValue) => setStep(newValue)} centered variant="fullWidth">
@@ -74,6 +84,54 @@ function App() {
                     >
                         {status}
                     </Alert>
+                    {fileSnippet && (
+                        <>
+                            <Box
+                                sx={{
+                                    mt: 2,
+                                    maxWidth: 500,
+                                    mx: "auto",
+                                    textAlign: "center", // Center the label
+                                    fontWeight: 400, // Lighter font weight
+                                    color: "#888", // Lighter color
+                                    fontSize: "0.95rem",
+                                    letterSpacing: 1,
+                                }}
+                            >
+                                Preview:
+                            </Box>
+                            <Box
+                                sx={{
+                                    mt: 0.5,
+                                    maxWidth: 500,
+                                    mx: "auto",
+                                    background: "#f8f8f8",
+                                    borderRadius: 1,
+                                    p: 2,
+                                    fontFamily: "monospace",
+                                    fontSize: "0.4rem",
+                                    color: "#444",
+                                    overflowX: "auto",
+                                    border: "1px solid #e0e0e0",
+                                    textAlign: "left",
+                                }}
+                            >
+                                <pre style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}>
+                                    {fileSnippet}
+                                    {fileSnippet.length === SNIPPET_LENGTH && (
+                                        <>
+                                            {"\n\n"}
+                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
+                                            {"\n"}
+                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
+                                            {"\n"}
+                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
+                                        </>
+                                    )}
+                                </pre>
+                            </Box>
+                        </>
+                    )}
                 </>
             ) : (
                 <div className="dummy-page">
