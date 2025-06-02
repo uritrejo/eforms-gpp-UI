@@ -14,6 +14,7 @@ function App() {
     const [status, setStatus] = useState("Waiting for file...");
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileSnippet, setFileSnippet] = useState("");
+    const [fileContent, setFileContent] = useState(""); // Store full file content
 
     const SNIPPET_LENGTH = 2000;
 
@@ -23,12 +24,12 @@ function App() {
             setSelectedFile(file);
             setStatus(`Loaded file: ${file.name}`);
 
-            // Read file and set snippet
+            // Read file and set snippet and content
             const reader = new FileReader();
             reader.onload = (event) => {
                 const text = event.target.result;
-                // Show first SNIPPET_LENGTH chars (or less)
                 setFileSnippet(text.slice(0, SNIPPET_LENGTH));
+                setFileContent(text);
             };
             reader.readAsText(file);
         }
@@ -38,9 +39,33 @@ function App() {
         document.getElementById("file-input").click();
     };
 
+    // Handler for Analyze Notice button
+    const handleAnalyzeNotice = async () => {
+        if (!fileContent) return;
+        try {
+            // TODO: move this URL to a config file
+            const response = await fetch("http://localhost:4420/api/v1/analyze-notice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/xml",
+                },
+                body: fileContent,
+            });
+            const text = await response.text();
+            console.log("API response:", text);
+            alert("API response:\n" + text);
+        } catch (err) {
+            console.error("API error:", err);
+            alert("API error: " + err.message);
+        }
+    };
+
     return (
         <div className="homepage-container">
             <h1>eForms GPP UI</h1>
+            <div className="logo-area">
+                <img src={reactLogo} alt="App Logo" className="app-logo" />
+            </div>
             <p className="description">Identify GPP criteria and apply them to your eForm notice.</p>
             {/* Material UI Stepper */}
             <Box sx={{ width: "100%", mb: 3 }}>
@@ -53,9 +78,6 @@ function App() {
             {/* Step Content */}
             {step === 0 ? (
                 <>
-                    <div className="logo-area">
-                        <img src={reactLogo} alt="App Logo" className="app-logo" />
-                    </div>
                     <h2>Upload Your eForm Notice</h2>
                     <div className="upload-area">
                         <input
@@ -91,9 +113,9 @@ function App() {
                                     mt: 2,
                                     maxWidth: 500,
                                     mx: "auto",
-                                    textAlign: "center", // Center the label
-                                    fontWeight: 400, // Lighter font weight
-                                    color: "#888", // Lighter color
+                                    textAlign: "center",
+                                    fontWeight: 400,
+                                    color: "#888",
                                     fontSize: "0.95rem",
                                     letterSpacing: 1,
                                 }}
@@ -130,6 +152,9 @@ function App() {
                                     )}
                                 </pre>
                             </Box>
+                            <Button variant="contained" color="success" sx={{ mt: 2 }} onClick={handleAnalyzeNotice}>
+                                Analyze Notice
+                            </Button>
                         </>
                     )}
                 </>
