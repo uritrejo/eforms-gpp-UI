@@ -18,7 +18,6 @@ import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 
-// ??++ AQUI
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
 
 function App() {
