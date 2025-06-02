@@ -34,6 +34,12 @@ function App() {
     const [patchDialogOpen, setPatchDialogOpen] = useState(false);
     const [patchDialogMsg, setPatchDialogMsg] = useState("");
 
+    // --- Add these states at the top of your App component ---
+    const [suggestedPatches, setSuggestedPatches] = useState([]);
+    const [selectedPatches, setSelectedPatches] = useState([]);
+    const [patchDetailsOpen, setPatchDetailsOpen] = useState(false);
+    const [patchDetailsItem, setPatchDetailsItem] = useState(null);
+
     const SNIPPET_LENGTH = 2000;
 
     const handleFileChange = (e) => {
@@ -116,15 +122,12 @@ function App() {
     // Handler for Suggest Patches button
     const handleSuggestPatches = async () => {
         if (!fileContent || !parsedResponse) return;
-        // Find selected criteria objects
         const selectedCriteriaObjs =
             parsedResponse.suggestedGppCriteria?.filter((crit) => selectedCriteria.includes(crit.id)) || [];
         try {
             const response = await fetch("http://localhost:4420/api/v1/suggest-patches", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     noticeXml: fileContent,
                     criteria: selectedCriteriaObjs,
@@ -132,6 +135,12 @@ function App() {
             });
             const text = await response.text();
             setPatchDialogMsg(text || "Patch suggestion completed.");
+            // Parse and store patches for next step
+            try {
+                const parsed = JSON.parse(text);
+                setSuggestedPatches(parsed.suggestedPatches || []);
+                setSelectedPatches(parsed.suggestedPatches?.map((_, i) => i) || []); // default: all selected
+            } catch {}
         } catch (err) {
             setPatchDialogMsg("API error: " + err.message);
         }
@@ -142,6 +151,17 @@ function App() {
         setPatchDialogOpen(false);
         setPatchDialogMsg("");
     };
+
+    // --- Patch selection handlers ---
+    const handleTogglePatch = (idx) => {
+        setSelectedPatches((prev) => (prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]));
+    };
+    const handleClearPatchSelection = () => setSelectedPatches([]);
+    const handlePatchViewDetails = (patch) => {
+        setPatchDetailsItem(patch);
+        setPatchDetailsOpen(true);
+    };
+    const handlePatchDetailsClose = () => setPatchDetailsOpen(false);
 
     return (
         <div className="homepage-container">
@@ -469,6 +489,169 @@ function App() {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleDetailsClose}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
+                </Box>
+            ) : step === 2 ? (
+                <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
+                    <h3>Suggested Patches</h3>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                        <p style={{ margin: 0, flex: 1 }}>
+                            Please select the patches that you wish to apply to your notice.
+                        </p>
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="small"
+                            sx={{ ml: 2, textTransform: "none" }}
+                            onClick={handleClearPatchSelection}
+                            disabled={selectedPatches.length === 0}
+                        >
+                            Clear Selection
+                        </Button>
+                    </Box>
+                    <Paper sx={{ p: 2, background: "#eceff1" }}>
+                        <List>
+                            {suggestedPatches.map((patch, idx) => (
+                                <div key={idx}>
+                                    <ListItem
+                                        sx={{
+                                            mb: 2,
+                                            borderRadius: 2,
+                                            boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
+                                            background: "#f7f7f7",
+                                            border: "1px solid #e0e7ef",
+                                            transition: "box-shadow 0.2s",
+                                            "&:hover": {
+                                                boxShadow: "0 4px 16px 0 rgba(60,72,88,0.15)",
+                                                borderColor: "#b2bac2",
+                                            },
+                                            px: 2,
+                                            py: 2,
+                                            flexDirection: "column",
+                                            alignItems: "stretch",
+                                        }}
+                                        disablePadding
+                                    >
+                                        <ListItemText
+                                            primary={
+                                                <span
+                                                    style={{ fontWeight: 600, fontSize: "0.98rem", color: "#1976d2" }}
+                                                >
+                                                    {patch.name}
+                                                </span>
+                                            }
+                                            secondary={
+                                                <span style={{ color: "#444", fontSize: "0.88rem" }}>
+                                                    {patch.description}
+                                                    <br />
+                                                    <b>Lot:</b> {patch.lotId} &nbsp; <b>Operation:</b> {patch.op}
+                                                </span>
+                                            }
+                                        />
+                                        <Box
+                                            sx={{
+                                                mt: 0.5,
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                onClick={() => handlePatchViewDetails(patch)}
+                                            >
+                                                View Details
+                                            </Button>
+                                            <Checkbox
+                                                edge="end"
+                                                onChange={() => handleTogglePatch(idx)}
+                                                checked={selectedPatches.includes(idx)}
+                                                sx={{ color: "#1976d2", ml: 1 }}
+                                            />
+                                        </Box>
+                                    </ListItem>
+                                    <Divider sx={{ my: 1, borderColor: "#e0e7ef" }} />
+                                </div>
+                            ))}
+                        </List>
+                    </Paper>
+                    {/* Patch Details Dialog */}
+                    <Dialog
+                        open={patchDetailsOpen}
+                        onClose={handlePatchDetailsClose}
+                        maxWidth="sm"
+                        fullWidth
+                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                    >
+                        <DialogTitle>Patch Details</DialogTitle>
+                        <DialogContent dividers>
+                            {patchDetailsItem && (
+                                <Box sx={{ fontSize: "1rem", color: "#222" }}>
+                                    {patchDetailsItem.name && (
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                            {patchDetailsItem.name}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.description && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Description:</b> {patchDetailsItem.description}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.lotId && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Lot:</b> {patchDetailsItem.lotId}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.op && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Operation:</b> {patchDetailsItem.op}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.path && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Path:</b> {patchDetailsItem.path}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.btIds && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>BT IDs:</b> {patchDetailsItem.btIds.join(", ")}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.dependsOn && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Depends On:</b> {patchDetailsItem.dependsOn}
+                                        </Typography>
+                                    )}
+                                    {patchDetailsItem.value && (
+                                        <Box sx={{ mt: 2 }}>
+                                            <Typography sx={{ fontWeight: 600 }}>Value:</Typography>
+                                            <Box
+                                                sx={{
+                                                    background: "#f8f8f8",
+                                                    borderRadius: 1,
+                                                    p: 2,
+                                                    fontFamily: "monospace",
+                                                    fontSize: "0.92rem",
+                                                    color: "#444",
+                                                    overflowX: "auto",
+                                                    border: "1px solid #e0e0e0",
+                                                    mt: 1,
+                                                }}
+                                            >
+                                                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                                                    {patchDetailsItem.value}
+                                                </pre>
+                                            </Box>
+                                        </Box>
+                                    )}
+                                </Box>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handlePatchDetailsClose}>Close</Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
