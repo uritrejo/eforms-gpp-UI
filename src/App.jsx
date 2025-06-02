@@ -11,6 +11,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
 
 // ??++ AQUI
 const steps = ["Upload Notice", "Select Criteria", "Download"];
@@ -23,6 +29,7 @@ function App() {
     const [fileContent, setFileContent] = useState(""); // Store full file content
     const [analyzeResponse, setAnalyzeResponse] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedCriteria, setSelectedCriteria] = useState([]);
 
     const SNIPPET_LENGTH = 2000;
 
@@ -77,9 +84,24 @@ function App() {
         setStep(1); // Move to "Select Criteria"
     };
 
+    // Parse analyzeResponse as JSON if on step 1
+    let parsedResponse = null;
+    if (step === 1 && analyzeResponse) {
+        try {
+            parsedResponse = JSON.parse(analyzeResponse);
+        } catch {
+            parsedResponse = null;
+        }
+    }
+
+    // Handler for selecting/deselecting criteria
+    const handleToggleCriterion = (id) => {
+        setSelectedCriteria((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
+    };
+
     return (
         <div className="homepage-container">
-            <h1>eForms GPP UI</h1>
+            <h1>eForms GPP</h1>
             <div className="logo-area">
                 <img src={reactLogo} alt="App Logo" className="app-logo" />
             </div>
@@ -175,6 +197,52 @@ function App() {
                         </>
                     )}
                 </>
+            ) : step === 1 ? (
+                <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
+                    {/* <h2>Select Criteria</h2> */}
+                    <h3>Relevant GPP Documents</h3>
+                    {/* Show Documents */}
+                    {parsedResponse?.relevantGppDocuments?.length > 0 && (
+                        <Paper sx={{ mb: 3, p: 2, background: "#f9f9f9" }}>
+                            {/* <h3>Relevant GPP Documents</h3> */}
+                            <List>
+                                {parsedResponse.relevantGppDocuments.map((doc) => (
+                                    <ListItem key={doc.name} alignItems="flex-start" disableGutters>
+                                        <ListItemText primary={doc.name} secondary={doc.summary} />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Paper>
+                    )}
+                    {/* Show Criteria */}
+                    <h3>Suggested GPP Criteria</h3>
+                    <p>Please select the criteria that you wish to insert into the notice.</p>
+                    <Paper sx={{ p: 2 }}>
+                        {/* <h3>Suggested GPP Criteria</h3> */}
+                        <List>
+                            {parsedResponse?.suggestedGppCriteria?.map((crit) => (
+                                <div key={crit.id}>
+                                    <ListItem
+                                        secondaryAction={
+                                            <Checkbox
+                                                edge="end"
+                                                onChange={() => handleToggleCriterion(crit.id)}
+                                                checked={selectedCriteria.includes(crit.id)}
+                                            />
+                                        }
+                                        disablePadding
+                                    >
+                                        <ListItemText
+                                            primary={`${crit.id}: ${crit.name}`}
+                                            secondary={`Lot: ${crit.lotId}`}
+                                        />
+                                    </ListItem>
+                                    <Divider />
+                                </div>
+                            ))}
+                        </List>
+                    </Paper>
+                </Box>
             ) : (
                 <div className="dummy-page">
                     <h2>{`STEP ${step + 1}: ${steps[step]}`}</h2>
