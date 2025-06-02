@@ -218,22 +218,53 @@ function App() {
                         <Paper sx={{ mb: 3, p: 2, background: "#f9f9f9" }}>
                             <List>
                                 {parsedResponse.relevantGppDocuments.map((doc) => (
-                                    <ListItem
-                                        key={doc.name}
-                                        alignItems="flex-start"
-                                        disableGutters
-                                        secondaryAction={
-                                            <Button
-                                                size="small"
-                                                variant="outlined"
-                                                onClick={() => handleViewDetails(doc)}
-                                            >
-                                                View Details
-                                            </Button>
-                                        }
-                                    >
-                                        <ListItemText primary={doc.name} secondary={doc.summary} />
-                                    </ListItem>
+                                    <div key={doc.name}>
+                                        <ListItem
+                                            sx={{
+                                                mb: 2,
+                                                borderRadius: 2,
+                                                boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
+                                                background: "#fff",
+                                                border: "1px solid #e0e7ef",
+                                                transition: "box-shadow 0.2s",
+                                                "&:hover": {
+                                                    boxShadow: "0 4px 16px 0 rgba(60,72,88,0.15)",
+                                                    borderColor: "#b2bac2",
+                                                },
+                                                alignItems: "flex-start",
+                                                px: 2,
+                                                py: 2,
+                                                flexDirection: "column",
+                                            }}
+                                            disableGutters
+                                        >
+                                            <ListItemText
+                                                primary={
+                                                    <span
+                                                        style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}
+                                                    >
+                                                        {doc.name}
+                                                    </span>
+                                                }
+                                                secondary={
+                                                    <span style={{ color: "#444", fontSize: "0.88rem" }}>
+                                                        {doc.summary}
+                                                    </span>
+                                                }
+                                            />
+                                            <Box sx={{ mt: 1, textAlign: "right" }}>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                    onClick={() => handleViewDetails(doc)}
+                                                >
+                                                    View Details
+                                                </Button>
+                                            </Box>
+                                        </ListItem>
+                                        <Divider sx={{ my: 1, borderColor: "#e0e7ef" }} />
+                                    </div>
                                 ))}
                             </List>
                         </Paper>
@@ -241,42 +272,68 @@ function App() {
                     {/* Show Criteria */}
                     <h3>Suggested GPP Criteria</h3>
                     <p>Please select the criteria that you wish to insert into the notice.</p>
-                    <Paper sx={{ p: 2 }}>
+                    <Paper sx={{ p: 2, background: "#f5f7fa" }}>
                         <List>
                             {parsedResponse?.suggestedGppCriteria?.map((crit) => (
                                 <div key={crit.id}>
                                     <ListItem
-                                        secondaryAction={
-                                            <>
-                                                <Button
-                                                    size="small"
-                                                    variant="outlined"
-                                                    sx={{ mr: 1 }}
-                                                    onClick={() => handleViewDetails(crit)}
-                                                >
-                                                    View Details
-                                                </Button>
-                                                <Checkbox
-                                                    edge="end"
-                                                    onChange={() => handleToggleCriterion(crit.id)}
-                                                    checked={selectedCriteria.includes(crit.id)}
-                                                />
-                                            </>
-                                        }
+                                        sx={{
+                                            mb: 2,
+                                            borderRadius: 2,
+                                            boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
+                                            background: "#fff",
+                                            border: "1px solid #e0e7ef",
+                                            transition: "box-shadow 0.2s",
+                                            "&:hover": {
+                                                boxShadow: "0 4px 16px 0 rgba(60,72,88,0.15)",
+                                                borderColor: "#b2bac2",
+                                            },
+                                            px: 2,
+                                            py: 2,
+                                            flexDirection: "column",
+                                            alignItems: "stretch",
+                                        }}
                                         disablePadding
                                     >
                                         <ListItemText
-                                            primary={`${crit.id}: ${crit.name}`}
+                                            primary={
+                                                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}>
+                                                    {crit.id}: {crit.name}
+                                                </span>
+                                            }
                                             secondary={
-                                                <>
-                                                    Lot: {crit.lotId}
+                                                <span style={{ color: "#444", fontSize: "0.88rem" }}>
+                                                    Lot: <b>{crit.lotId}</b>
                                                     <br />
-                                                    Ambition Level: {crit.ambitionLevel}
-                                                </>
+                                                    Ambition Level: <b>{crit.ambitionLevel}</b>
+                                                </span>
                                             }
                                         />
+                                        <Box
+                                            sx={{
+                                                mt: 0.5,
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                onClick={() => handleViewDetails(crit)}
+                                            >
+                                                View Details
+                                            </Button>
+                                            <Checkbox
+                                                edge="end"
+                                                onChange={() => handleToggleCriterion(crit.id)}
+                                                checked={selectedCriteria.includes(crit.id)}
+                                                sx={{ color: "#1976d2", ml: 1 }}
+                                            />
+                                        </Box>
                                     </ListItem>
-                                    <Divider />
+                                    <Divider sx={{ my: 1, borderColor: "#e0e7ef" }} />
                                 </div>
                             ))}
                         </List>
