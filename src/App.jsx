@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 
+// ??++ AQUI
 const steps = ["Upload Notice", "Patch", "Download"];
 
 function App() {
