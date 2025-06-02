@@ -1,35 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+
+const steps = ["Upload", "Patch", "Download"];
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [step, setStep] = useState(0);
+    const [status, setStatus] = useState("Waiting for file...");
+    const [selectedFile, setSelectedFile] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setStatus(`Loaded file: ${file.name}`);
+        }
+    };
+
+    const handleAreaClick = () => {
+        document.getElementById("file-input").click();
+    };
+
+    return (
+        <div className="homepage-container">
+            <h1>eForms GPP UI</h1>
+            <p className="description">
+                Easily upload and patch your procurement notice XML files in a few simple steps.
+            </p>
+            {/* Material UI Stepper */}
+            <Box sx={{ width: "100%", mb: 3 }}>
+                <Tabs value={step} onChange={(_, newValue) => setStep(newValue)} centered variant="fullWidth">
+                    {steps.map((label, idx) => (
+                        <Tab key={label} label={`STEP ${idx + 1}: ${label}`} />
+                    ))}
+                </Tabs>
+            </Box>
+            {/* Step Content */}
+            {step === 0 ? (
+                <>
+                    <div className="logo-area">
+                        <img src={reactLogo} alt="App Logo" className="app-logo" />
+                    </div>
+                    <h2>Upload Your eForm Notice</h2>
+                    <div className="upload-area">
+                        <input
+                            id="file-input"
+                            type="file"
+                            accept=".xml"
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                        />
+                        <Button variant="contained" color="primary" onClick={handleAreaClick} sx={{ mt: 2, mb: 1 }}>
+                            Select XML File
+                        </Button>
+                    </div>
+                    <Alert
+                        severity={selectedFile ? "success" : "info"}
+                        sx={{
+                            mt: 2,
+                            maxWidth: 350,
+                            mx: "auto",
+                            backgroundColor: selectedFile ? "success.lighter" : "info.lighter",
+                            color: selectedFile ? "success.dark" : "info.dark",
+                            boxShadow: "none",
+                            border: "1px solid #e0e0e0",
+                            fontSize: "1rem",
+                        }}
+                    >
+                        {status}
+                    </Alert>
+                </>
+            ) : (
+                <div className="dummy-page">
+                    <h2>{`STEP ${step + 1}: ${steps[step]}`}</h2>
+                    <p>This is a placeholder for the {steps[step]} step.</p>
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default App
+export default App;
