@@ -32,6 +32,8 @@ function App() {
     const [selectedCriteria, setSelectedCriteria] = useState([]);
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [detailsItem, setDetailsItem] = useState(null);
+    const [patchDialogOpen, setPatchDialogOpen] = useState(false);
+    const [patchDialogMsg, setPatchDialogMsg] = useState("");
 
     const SNIPPET_LENGTH = 2000;
 
@@ -110,6 +112,36 @@ function App() {
     // Handler for selecting/deselecting criteria
     const handleToggleCriterion = (id) => {
         setSelectedCriteria((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
+    };
+
+    // Handler for Suggest Patches button
+    const handleSuggestPatches = async () => {
+        if (!fileContent || !parsedResponse) return;
+        // Find selected criteria objects
+        const selectedCriteriaObjs =
+            parsedResponse.suggestedGppCriteria?.filter((crit) => selectedCriteria.includes(crit.id)) || [];
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/suggest-patches", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    noticeXml: fileContent,
+                    criteria: selectedCriteriaObjs,
+                }),
+            });
+            const text = await response.text();
+            setPatchDialogMsg(text || "Patch suggestion completed.");
+        } catch (err) {
+            setPatchDialogMsg("API error: " + err.message);
+        }
+        setPatchDialogOpen(true);
+    };
+
+    const handlePatchDialogClose = () => {
+        setPatchDialogOpen(false);
+        setPatchDialogMsg("");
     };
 
     return (
@@ -338,6 +370,18 @@ function App() {
                             ))}
                         </List>
                     </Paper>
+                    {/* Suggest Patches Button */}
+                    <Box sx={{ mt: 4, textAlign: "center" }}>
+                        <Button
+                            variant="contained"
+                            color="success"
+                            sx={{ fontWeight: 600, fontSize: "1rem", px: 3, py: 1 }}
+                            onClick={handleSuggestPatches}
+                            disabled={selectedCriteria.length === 0}
+                        >
+                            Suggest Patches
+                        </Button>
+                    </Box>
                     {/* Details Dialog */}
                     <Dialog
                         open={detailsOpen}
@@ -447,6 +491,20 @@ function App() {
                     <Button variant="contained" color="primary" onClick={handleNextStep}>
                         Next: Select Criteria
                     </Button>
+                </DialogActions>
+            </Dialog>
+            {/* Suggest Patches Dialog */}
+            <Dialog
+                open={patchDialogOpen}
+                onClose={handlePatchDialogClose}
+                PaperProps={{ sx: { background: "#d3d3d3" } }}
+            >
+                <DialogTitle>Suggest Patches</DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ whiteSpace: "pre-wrap" }}>{patchDialogMsg}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handlePatchDialogClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </div>
