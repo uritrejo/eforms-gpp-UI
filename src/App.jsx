@@ -349,9 +349,65 @@ function App() {
                         <DialogTitle>Details</DialogTitle>
                         <DialogContent dividers>
                             {detailsItem && (
-                                <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: "1rem" }}>
-                                    {JSON.stringify(detailsItem, null, 2)}
-                                </pre>
+                                <Box sx={{ fontSize: "1rem", color: "#222" }}>
+                                    {detailsItem.name && (
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                            {detailsItem.name}
+                                        </Typography>
+                                    )}
+                                    {detailsItem.id && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>ID:</b> {detailsItem.id}
+                                        </Typography>
+                                    )}
+                                    {detailsItem.lotId && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Lot:</b> {detailsItem.lotId}
+                                        </Typography>
+                                    )}
+                                    {detailsItem.ambitionLevel && (
+                                        <Typography sx={{ mb: 1 }}>
+                                            <b>Ambition Level:</b> {detailsItem.ambitionLevel}
+                                        </Typography>
+                                    )}
+                                    {detailsItem.summary && (
+                                        <Typography sx={{ mb: 2 }}>
+                                            <b>Summary:</b> {detailsItem.summary}
+                                        </Typography>
+                                    )}
+                                    {/* Show all other fields in a table */}
+                                    <Box component="table" sx={{ width: "100%", mt: 1 }}>
+                                        <tbody>
+                                            {Object.entries(detailsItem)
+                                                .filter(
+                                                    ([key]) =>
+                                                        !["name", "id", "lotId", "ambitionLevel", "summary"].includes(
+                                                            key
+                                                        )
+                                                )
+                                                .map(([key, value]) => (
+                                                    <tr key={key}>
+                                                        <td
+                                                            style={{
+                                                                fontWeight: 600,
+                                                                paddingRight: 8,
+                                                                verticalAlign: "top",
+                                                            }}
+                                                        >
+                                                            {key}:
+                                                        </td>
+                                                        <td>
+                                                            {Array.isArray(value)
+                                                                ? value.join(", ")
+                                                                : typeof value === "string"
+                                                                ? value
+                                                                : JSON.stringify(value, null, 2)}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                        </tbody>
+                                    </Box>
+                                </Box>
                             )}
                         </DialogContent>
                         <DialogActions>
