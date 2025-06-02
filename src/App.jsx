@@ -6,9 +6,14 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Typography from "@mui/material/Typography";
 
 // ??++ AQUI
-const steps = ["Upload Notice", "Patch", "Download"];
+const steps = ["Upload Notice", "Select Criteria", "Download"];
 
 function App() {
     const [step, setStep] = useState(0);
@@ -16,6 +21,8 @@ function App() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileSnippet, setFileSnippet] = useState("");
     const [fileContent, setFileContent] = useState(""); // Store full file content
+    const [analyzeResponse, setAnalyzeResponse] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     const SNIPPET_LENGTH = 2000;
 
@@ -53,12 +60,21 @@ function App() {
                 body: fileContent,
             });
             const text = await response.text();
-            console.log("API response:", text);
-            alert("API response:\n" + text);
+            setAnalyzeResponse(text);
+            setDialogOpen(true);
         } catch (err) {
-            console.error("API error:", err);
-            alert("API error: " + err.message);
+            setAnalyzeResponse("API error: " + err.message);
+            setDialogOpen(true);
         }
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleNextStep = () => {
+        setDialogOpen(false);
+        setStep(1); // Move to "Select Criteria"
     };
 
     return (
@@ -165,6 +181,21 @@ function App() {
                     <p>This is a placeholder for the {steps[step]} step.</p>
                 </div>
             )}
+            {/* Analyze Notice Dialog */}
+            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+                <DialogTitle>Notice Analysis Result</DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ whiteSpace: "pre-wrap" }}>
+                        {analyzeResponse ? analyzeResponse : "No response."}
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Close</Button>
+                    <Button variant="contained" color="primary" onClick={handleNextStep}>
+                        Next: Select Criteria
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
