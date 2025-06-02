@@ -370,7 +370,20 @@ function App() {
                 <DialogTitle>Notice Analysis Result</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                        {analyzeResponse ? analyzeResponse : "No response."}
+                        {(() => {
+                            // Try to parse and show a short summary
+                            try {
+                                const parsed = JSON.parse(analyzeResponse);
+                                const docCount = parsed?.relevantGppDocuments?.length || 0;
+                                const critCount = parsed?.suggestedGppCriteria?.length || 0;
+                                return `Found ${docCount} relevant GPP document${
+                                    docCount === 1 ? "" : "s"
+                                } and ${critCount} suggested criteri${critCount === 1 ? "on" : "a"}.`;
+                            } catch {
+                                // fallback to a generic message or error
+                                return "Notice analysis completed.";
+                            }
+                        })()}
                     </Typography>
                 </DialogContent>
                 <DialogActions>
