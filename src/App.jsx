@@ -303,7 +303,21 @@ function App() {
                     )}
                     {/* Show Criteria */}
                     <h3>Suggested GPP Criteria</h3>
-                    <p>Please select the criteria that you wish to insert into the notice.</p>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                        <p style={{ margin: 0, flex: 1 }}>
+                            Please select the criteria that you wish to insert into the notice.
+                        </p>
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="small"
+                            sx={{ ml: 2, textTransform: "none" }}
+                            onClick={() => setSelectedCriteria([])}
+                            disabled={selectedCriteria.length === 0}
+                        >
+                            Clear Selection
+                        </Button>
+                    </Box>
                     <Paper sx={{ p: 2, background: "#999999" /* slightly more gray */ }}>
                         <List>
                             {parsedResponse?.suggestedGppCriteria?.map((crit) => (
