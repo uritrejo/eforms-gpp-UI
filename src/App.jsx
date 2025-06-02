@@ -19,7 +19,7 @@ import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 
 // ??++ AQUI
-const steps = ["Upload Notice", "Select Criteria", "Download"];
+const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
 
 function App() {
     const [step, setStep] = useState(0);
@@ -501,10 +501,32 @@ function App() {
             >
                 <DialogTitle>Suggest Patches</DialogTitle>
                 <DialogContent>
-                    <Typography sx={{ whiteSpace: "pre-wrap" }}>{patchDialogMsg}</Typography>
+                    <Typography sx={{ whiteSpace: "pre-wrap", mb: 2 }}>
+                        {(() => {
+                            try {
+                                const parsed = JSON.parse(patchDialogMsg);
+                                const patchCount = parsed?.suggestedPatches?.length || 0;
+                                return `The eForms GPP library suggested ${patchCount} patch${
+                                    patchCount === 1 ? "" : "es"
+                                } for your notice.`;
+                            } catch {
+                                return patchDialogMsg || "Patch suggestion completed.";
+                            }
+                        })()}
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handlePatchDialogClose}>Close</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            setPatchDialogOpen(false);
+                            setStep(2); // Go to "Select Patches" step
+                        }}
+                    >
+                        Next: Select Patches
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>
