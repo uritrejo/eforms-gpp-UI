@@ -500,11 +500,24 @@ function App() {
                                                             {key}:
                                                         </td>
                                                         <td>
-                                                            {Array.isArray(value)
-                                                                ? value.join(", ")
-                                                                : typeof value === "string"
-                                                                ? value
-                                                                : JSON.stringify(value, null, 2)}
+                                                            {["source", "documentReference"].includes(key) &&
+                                                            typeof value === "string" &&
+                                                            value.startsWith("http") ? (
+                                                                <a
+                                                                    href={value}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    style={{ color: "#1976d2", wordBreak: "break-all" }}
+                                                                >
+                                                                    {value}
+                                                                </a>
+                                                            ) : Array.isArray(value) ? (
+                                                                value.join(", ")
+                                                            ) : typeof value === "string" ? (
+                                                                value
+                                                            ) : (
+                                                                JSON.stringify(value, null, 2)
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 ))}
