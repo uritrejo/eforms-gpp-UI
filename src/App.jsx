@@ -17,6 +17,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
+import ReactDiffViewer from "react-diff-viewer";
 
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
 
@@ -43,6 +44,7 @@ function App() {
     const [selectedPatches, setSelectedPatches] = useState([]);
     const [patchDetailsOpen, setPatchDetailsOpen] = useState(false);
     const [patchDetailsItem, setPatchDetailsItem] = useState(null);
+    const [patchedXml, setPatchedXml] = useState(""); // Add this state
 
     const SNIPPET_LENGTH = 2000;
 
@@ -182,6 +184,10 @@ function App() {
             });
             const text = await response.text();
             setApplyDialogMsg(text || "Patches applied.");
+            try {
+                const parsed = JSON.parse(text);
+                if (parsed.patchedNoticeXml) setPatchedXml(parsed.patchedNoticeXml);
+            } catch {}
         } catch (err) {
             setApplyDialogMsg("API error: " + err.message);
         }
@@ -189,6 +195,31 @@ function App() {
     };
 
     const handleApplyDialogClose = () => setApplyDialogOpen(false);
+
+    function formatXml(xml) {
+        // Remove leading/trailing whitespace
+        xml = xml.trim();
+        // Insert line breaks
+        let formatted = "";
+        const reg = /(>)(<)(\/*)/g;
+        xml = xml.replace(reg, "$1\n$2$3");
+        let pad = 0;
+        xml.split("\n").forEach((node) => {
+            let indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            } else if (node.match(/^<\/\w/)) {
+                if (pad !== 0) pad -= 1;
+            } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
+                indent = 1;
+            } else {
+                indent = 0;
+            }
+            formatted += "  ".repeat(pad) + node + "\n";
+            pad += indent;
+        });
+        return formatted.trim();
+    }
 
     return (
         <div className="homepage-container">
@@ -874,6 +905,65 @@ function App() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            {/* Review & Download Step */}
+            {step === 3 && (
+                <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
+                    <h2>Review & Download</h2>
+                    <Typography sx={{ mb: 2 }}>
+                        Below is a comparison between your original notice and the patched notice.
+                    </Typography>
+                    <Paper
+                        sx={{
+                            p: 2,
+                            mb: 3,
+                            maxHeight: 480,
+                            overflow: "auto",
+                            background: "#f8f8f8",
+                            borderRadius: 2,
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontFamily: "monospace",
+                                fontSize: "0.75rem",
+                                lineHeight: 1.2,
+                                maxHeight: 400,
+                                overflow: "auto",
+                            }}
+                        >
+                            <ReactDiffViewer
+                                oldValue={formatXml(fileContent)}
+                                newValue={formatXml(patchedXml)}
+                                splitView={true}
+                                leftTitle="Original Notice"
+                                rightTitle="Patched Notice"
+                                styles={{
+                                    variables: {
+                                        light: {
+                                            diffViewerBackground: "#f8f8f8",
+                                        },
+                                    },
+                                    diffContainer: {
+                                        fontSize: "0.5rem",
+                                        lineHeight: "1.2",
+                                        maxHeight: 700,
+                                        overflow: "auto",
+                                    },
+                                    contentText: {
+                                        fontSize: "0.5rem",
+                                        lineHeight: "1.2",
+                                    },
+                                    line: {
+                                        fontSize: "0.5rem",
+                                        lineHeight: "1.2",
+                                    },
+                                }}
+                            />
+                        </div>
+                    </Paper>
+                    {/* Add download button or further actions here */}
+                </Box>
+            )}
         </div>
     );
 }
