@@ -917,7 +917,30 @@ function App() {
                     <Button variant="outlined" color="primary" sx={{ mb: 3 }} onClick={() => setDiffModalOpen(true)}>
                         Show Diff Viewer
                     </Button>
-                    {/* Other review/download actions can go here */}
+
+                    {/* Download Patched Notice Section */}
+                    <h2>Download Patched Notice</h2>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        disabled={!patchedXml}
+                        onClick={() => {
+                            // Create a blob and trigger download
+                            const blob = new Blob([patchedXml], { type: "application/xml" });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "patchedNotice.xml";
+                            document.body.appendChild(a);
+                            a.click();
+                            setTimeout(() => {
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                            }, 0);
+                        }}
+                    >
+                        Download Patched Notice
+                    </Button>
 
                     {/* Diff Viewer Modal */}
                     <Dialog
