@@ -510,7 +510,7 @@ function App() {
                             Clear Selection
                         </Button>
                     </Box>
-                    <Paper sx={{ p: 2, background: "#eceff1" }}>
+                    <Paper sx={{ p: 2, background: "#999999" /* match criteria/documents bg */ }}>
                         <List>
                             {suggestedPatches.map((patch, idx) => (
                                 <div key={idx}>
@@ -519,7 +519,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#f7f7f7",
+                                            background: "#d3d3d3", // match criteria/documents item bg
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -634,16 +634,54 @@ function App() {
                                                     borderRadius: 1,
                                                     p: 2,
                                                     fontFamily: "monospace",
-                                                    fontSize: "0.92rem",
+                                                    fontSize: "0.50rem", // smaller font
                                                     color: "#444",
                                                     overflowX: "auto",
                                                     border: "1px solid #e0e0e0",
                                                     mt: 1,
+                                                    maxHeight: 240,
                                                 }}
                                             >
-                                                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                                                    {patchDetailsItem.value}
-                                                </pre>
+                                                <pre
+                                                    style={{
+                                                        margin: 0,
+                                                        whiteSpace: "pre-wrap",
+                                                        textAlign: "left",
+                                                        color: "#3b3b3b",
+                                                    }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: patchDetailsItem.value
+                                                            .replace(/&/g, "&amp;")
+                                                            .replace(/</g, "&lt;")
+                                                            .replace(/>/g, "&gt;")
+                                                            // Highlight comments
+                                                            .replace(
+                                                                /(&lt;!--[\s\S]*?--&gt;)/g,
+                                                                '<span style="color:#999;">$1</span>'
+                                                            )
+                                                            // Highlight tags and attributes
+                                                            .replace(
+                                                                /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                                                function (_, open, tag, attrs, close) {
+                                                                    // Highlight attributes and values
+                                                                    const attrsHighlighted = attrs.replace(
+                                                                        /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                                        '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                                                    );
+                                                                    return (
+                                                                        '<span style="color:#1976d2;">' +
+                                                                        open +
+                                                                        tag +
+                                                                        "</span>" +
+                                                                        attrsHighlighted +
+                                                                        '<span style="color:#1976d2;">' +
+                                                                        close +
+                                                                        "</span>"
+                                                                    );
+                                                                }
+                                                            ),
+                                                    }}
+                                                />
                                             </Box>
                                         </Box>
                                     )}
