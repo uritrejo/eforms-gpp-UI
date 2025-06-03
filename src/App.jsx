@@ -34,6 +34,10 @@ function App() {
     const [patchDialogOpen, setPatchDialogOpen] = useState(false);
     const [patchDialogMsg, setPatchDialogMsg] = useState("");
 
+    // --- Add state for apply patches dialog at the top of App ---
+    const [applyDialogOpen, setApplyDialogOpen] = useState(false);
+    const [applyDialogMsg, setApplyDialogMsg] = useState("");
+
     // --- Add these states at the top of your App component ---
     const [suggestedPatches, setSuggestedPatches] = useState([]);
     const [selectedPatches, setSelectedPatches] = useState([]);
@@ -162,6 +166,29 @@ function App() {
         setPatchDetailsOpen(true);
     };
     const handlePatchDetailsClose = () => setPatchDetailsOpen(false);
+
+    // --- Handler for Apply Patches ---
+    const handleApplyPatches = async () => {
+        if (!fileContent || !suggestedPatches.length || !selectedPatches.length) return;
+        const patchesToApply = selectedPatches.map((idx) => suggestedPatches[idx]);
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/apply-patches", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    noticeXml: fileContent,
+                    patches: patchesToApply,
+                }),
+            });
+            const text = await response.text();
+            setApplyDialogMsg(text || "Patches applied.");
+        } catch (err) {
+            setApplyDialogMsg("API error: " + err.message);
+        }
+        setApplyDialogOpen(true);
+    };
+
+    const handleApplyDialogClose = () => setApplyDialogOpen(false);
 
     return (
         <div className="homepage-container">
@@ -617,6 +644,18 @@ function App() {
                             ))}
                         </List>
                     </Paper>
+                    {/* --- Add Apply Patches Button here --- */}
+                    <Box sx={{ mt: 4, textAlign: "center" }}>
+                        <Button
+                            variant="contained"
+                            color="success"
+                            sx={{ fontWeight: 600, fontSize: "1rem", px: 3, py: 1 }}
+                            onClick={handleApplyPatches}
+                            disabled={selectedPatches.length === 0}
+                        >
+                            Apply Patches
+                        </Button>
+                    </Box>
                     {/* Patch Details Dialog */}
                     <Dialog
                         open={patchDetailsOpen}
@@ -799,6 +838,39 @@ function App() {
                         }}
                     >
                         Next: Select Patches
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {/* Apply Patches Dialog */}
+            <Dialog
+                open={applyDialogOpen}
+                onClose={handleApplyDialogClose}
+                PaperProps={{ sx: { background: "#d3d3d3" } }}
+            >
+                <DialogTitle>Apply Patches</DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ whiteSpace: "pre-wrap", mb: 2 }}>
+                        {(() => {
+                            try {
+                                const parsed = JSON.parse(applyDialogMsg);
+                                return parsed?.message || "Patches applied successfully.";
+                            } catch {
+                                return applyDialogMsg || "Patches applied.";
+                            }
+                        })()}
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleApplyDialogClose}>Close</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            setApplyDialogOpen(false);
+                            setStep(3); // Go to "Review & Download" step
+                        }}
+                    >
+                        Next: Review & Download
                     </Button>
                 </DialogActions>
             </Dialog>
