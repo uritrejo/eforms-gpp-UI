@@ -241,19 +241,45 @@ function App() {
                                     textAlign: "left",
                                 }}
                             >
-                                <pre style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}>
-                                    {fileSnippet}
-                                    {fileSnippet.length === SNIPPET_LENGTH && (
-                                        <>
-                                            {"\n\n"}
-                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
-                                            {"\n"}
-                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
-                                            {"\n"}
-                                            <span style={{ color: "#888", fontSize: "0.6rem" }}>...</span>
-                                        </>
-                                    )}
-                                </pre>
+                                <pre
+                                    style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            fileSnippet
+                                                .replace(/&/g, "&amp;")
+                                                .replace(/</g, "&lt;")
+                                                .replace(/>/g, "&gt;")
+                                                // Highlight comments
+                                                .replace(
+                                                    /(&lt;!--[\s\S]*?--&gt;)/g,
+                                                    '<span style="color:#999;">$1</span>'
+                                                )
+                                                // Highlight tags and attributes
+                                                .replace(
+                                                    /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                                    function (_, open, tag, attrs, close) {
+                                                        // Highlight attributes and values
+                                                        const attrsHighlighted = attrs.replace(
+                                                            /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                            '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                                        );
+                                                        return (
+                                                            '<span style="color:#1976d2;">' +
+                                                            open +
+                                                            tag +
+                                                            "</span>" +
+                                                            attrsHighlighted +
+                                                            '<span style="color:#1976d2;">' +
+                                                            close +
+                                                            "</span>"
+                                                        );
+                                                    }
+                                                ) +
+                                            (fileSnippet.length === SNIPPET_LENGTH
+                                                ? `<br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span>`
+                                                : ""),
+                                    }}
+                                />
                             </Box>
                             <Button variant="contained" color="success" sx={{ mt: 2 }} onClick={handleAnalyzeNotice}>
                                 Analyze Notice
