@@ -910,12 +910,9 @@ function App() {
             {/* Review & Download Step */}
             {step === 3 && (
                 <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-                    <h2>Review & Download</h2>
+                    <h2>Review Diff</h2>
                     <Typography sx={{ mb: 2 }}>
-                        Below is a comparison between your original notice and the patched notice.
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mt: 3, mb: 1, fontWeight: 600 }}>
-                        Review Diff (a comparison between your original notice and the patched notice)
+                        Click to see a comparison between your original notice and the patched notice.
                     </Typography>
                     <Button variant="outlined" color="primary" sx={{ mb: 3 }} onClick={() => setDiffModalOpen(true)}>
                         Show Diff Viewer
