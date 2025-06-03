@@ -803,9 +803,10 @@ function App() {
                     </Dialog>
                 </Box>
             ) : (
+                // TODO: remove this somehow
                 <div className="dummy-page">
-                    <h2>{`STEP ${step + 1}: ${steps[step]}`}</h2>
-                    <p>This is a placeholder for the {steps[step]} step.</p>
+                    {/* <h2>{`STEP ${step + 1}: ${steps[step]}`}</h2>
+                    <p>This is a placeholder for the {steps[step]} step.</p> */}
                 </div>
             )}
             {/* Analyze Notice Dialog */}
@@ -925,9 +926,9 @@ function App() {
                         <div
                             style={{
                                 fontFamily: "monospace",
-                                fontSize: "0.75rem",
+                                fontSize: "0.5rem",
                                 lineHeight: 1.2,
-                                maxHeight: 400,
+                                maxHeight: 700,
                                 overflow: "auto",
                             }}
                         >
