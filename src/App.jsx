@@ -330,7 +330,7 @@ function App() {
             {/* Step Content */}
             {step === 0 ? (
                 <>
-                    <h2>Upload Your eForm Notice</h2>
+                    <h2 style={{ color: "#2e7d32", fontWeight: 600 }}>Upload Your eForm Notice</h2>
                     <div className="upload-area">
                         <input
                             id="file-input"
@@ -394,14 +394,14 @@ function App() {
                                     mt: 0.5,
                                     maxWidth: 500,
                                     mx: "auto",
-                                    background: "#f8f8f8",
+                                    background: "#2d3748",
                                     borderRadius: 1,
                                     p: 2,
                                     fontFamily: "monospace",
-                                    fontSize: "0.4rem",
-                                    color: "#444",
+                                    fontSize: "0.5rem",
+                                    color: "#e2e8f0",
                                     overflowX: "auto",
-                                    border: "1px solid #e0e0e0",
+                                    border: "1px solid #4a5568",
                                     textAlign: "left",
                                     maxHeight: 160,
                                     overflowY: "auto",
@@ -444,17 +444,25 @@ function App() {
                             <Box sx={{ height: 40 }} />
                             <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                                 <Button
-                                    variant="outlined"
-                                    color="primary"
+                                    variant="contained"
                                     disabled={!fileContent || renderLoading}
                                     onClick={handleRenderPreview}
                                     sx={{
-                                        borderColor: "#b0b0b0",
-                                        color: "#1976d2",
-                                        background: "#f5fafd",
+                                        background: "linear-gradient(135deg, #66bb6a 0%, #81c784 100%)",
+                                        color: "white",
+                                        px: 3,
+                                        py: 1,
+                                        fontSize: "0.95rem",
+                                        fontWeight: 600,
+                                        border: "1px solid #4caf50",
                                         "&:hover": {
-                                            background: "#e3f1fb",
-                                            borderColor: "#1976d2",
+                                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                            transform: "translateY(-1px)",
+                                            boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                        },
+                                        "&:disabled": {
+                                            background: "#e0e0e0",
+                                            color: "#9e9e9e",
                                         },
                                     }}
                                 >
@@ -606,10 +614,24 @@ function App() {
                             Please select the criteria that you wish to insert into the notice.
                         </p>
                         <Button
-                            variant="outlined"
-                            color="secondary"
+                            variant="contained"
                             size="small"
-                            sx={{ ml: 2, textTransform: "none" }}
+                            sx={{
+                                ml: 2,
+                                textTransform: "none",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                fontWeight: 600,
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 3px 8px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
+                                },
+                            }}
                             onClick={() => setSelectedCriteria([])}
                             disabled={selectedCriteria.length === 0}
                         >
@@ -792,10 +814,24 @@ function App() {
                             Please select the patches that you wish to apply to your notice.
                         </p>
                         <Button
-                            variant="outlined"
-                            color="secondary"
+                            variant="contained"
                             size="small"
-                            sx={{ ml: 2, textTransform: "none" }}
+                            sx={{
+                                ml: 2,
+                                textTransform: "none",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                fontWeight: 600,
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 3px 8px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
+                                },
+                            }}
                             onClick={handleClearPatchSelection}
                             disabled={selectedPatches.length === 0}
                         >
@@ -1140,14 +1176,14 @@ function App() {
                             mt: 0.5,
                             maxWidth: 500,
                             mx: "auto",
-                            background: "#f8f8f8",
+                            background: "#2d3748",
                             borderRadius: 1,
                             p: 2,
                             fontFamily: "monospace",
-                            fontSize: "0.4rem",
-                            color: "#444",
+                            fontSize: "0.5rem",
+                            color: "#e2e8f0",
                             overflowX: "auto",
-                            border: "1px solid #e0e0e0",
+                            border: "1px solid #4a5568",
                             textAlign: "left",
                             maxHeight: 160,
                             overflowY: "auto",
@@ -1190,8 +1226,7 @@ function App() {
                     <Box sx={{ height: 40 }} />
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <Button
-                            variant="outlined"
-                            color="primary"
+                            variant="contained"
                             disabled={!patchedXml || renderLoading}
                             onClick={async () => {
                                 setRenderLoading(true);
@@ -1219,12 +1254,21 @@ function App() {
                                 setRenderDialogOpen(true);
                             }}
                             sx={{
-                                borderColor: "#b0b0b0",
-                                color: "#1976d2",
-                                background: "#f5fafd",
+                                background: "linear-gradient(135deg, #66bb6a 0%, #81c784 100%)",
+                                color: "white",
+                                px: 3,
+                                py: 1,
+                                fontSize: "0.95rem",
+                                fontWeight: 600,
+                                border: "1px solid #4caf50",
                                 "&:hover": {
-                                    background: "#e3f1fb",
-                                    borderColor: "#1976d2",
+                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
                                 },
                             }}
                         >
@@ -1242,16 +1286,24 @@ function App() {
                     {/* Validate Notice button */}
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             disabled={!patchedXml || validationLoading}
                             onClick={handleValidateNotice}
                             sx={{
-                                borderColor: "#ff9800",
-                                color: "#ff9800",
-                                background: "#fff8e1",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                px: 3,
+                                py: 1,
+                                fontSize: "0.95rem",
+                                fontWeight: 600,
                                 "&:hover": {
-                                    background: "#ffe0b2",
-                                    borderColor: "#fb8c00",
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
                                 },
                             }}
                         >
