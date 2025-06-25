@@ -224,7 +224,7 @@ function App() {
 
     return (
         <div className="homepage-container">
-            <h1>eForms GPP</h1>
+            <h1>eForms GPP Tool</h1>
             <div className="logo-area">
                 <img src={reactLogo} alt="App Logo" className="app-logo" />
             </div>
