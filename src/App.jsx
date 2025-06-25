@@ -996,9 +996,126 @@ function App() {
             {/* Review & Download Step */}
             {step === 3 && (
                 <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-                    {/* Remove Review Diff and Diff Viewer Modal */}
+                    {/* Raw XML Preview for Patched Notice */}
+                    <Box
+                        sx={{
+                            mt: 2,
+                            maxWidth: 500,
+                            mx: "auto",
+                            textAlign: "center",
+                            fontWeight: 400,
+                            color: "#b0b0b0",
+                            fontSize: "0.95rem",
+                            letterSpacing: 1,
+                        }}
+                    >
+                        Raw XML Preview (Patched Notice):
+                    </Box>
+                    <Box
+                        sx={{
+                            mt: 0.5,
+                            maxWidth: 500,
+                            mx: "auto",
+                            background: "#f8f8f8",
+                            borderRadius: 1,
+                            p: 2,
+                            fontFamily: "monospace",
+                            fontSize: "0.4rem",
+                            color: "#444",
+                            overflowX: "auto",
+                            border: "1px solid #e0e0e0",
+                            textAlign: "left",
+                            maxHeight: 160,
+                            overflowY: "auto",
+                        }}
+                    >
+                        <pre
+                            style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
+                            dangerouslySetInnerHTML={{
+                                __html: patchedXml
+                                    .replace(/&/g, "&amp;")
+                                    .replace(/</g, "&lt;")
+                                    .replace(/>/g, "&gt;")
+                                    // Highlight comments
+                                    .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#999;">$1</span>')
+                                    // Highlight tags and attributes
+                                    .replace(
+                                        /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                        function (_, open, tag, attrs, close) {
+                                            // Highlight attributes and values
+                                            const attrsHighlighted = attrs.replace(
+                                                /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                            );
+                                            return (
+                                                '<span style="color:#1976d2;">' +
+                                                open +
+                                                tag +
+                                                "</span>" +
+                                                attrsHighlighted +
+                                                '<span style="color:#1976d2;">' +
+                                                close +
+                                                "</span>"
+                                            );
+                                        }
+                                    ),
+                            }}
+                        />
+                    </Box>
+                    {/* Preview Rendered Notice button for Patched Notice */}
+                    <Box sx={{ height: 40 }} />
+                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            disabled={!patchedXml || renderLoading}
+                            onClick={async () => {
+                                setRenderLoading(true);
+                                setRenderError("");
+                                setRenderHtml("");
+                                try {
+                                    const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                            noticeXml: patchedXml,
+                                        }),
+                                    });
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP ${response.status}`);
+                                    }
+                                    const html = await response.text();
+                                    setRenderHtml(html);
+                                } catch (err) {
+                                    setRenderError("Failed to render notice: " + err.message);
+                                }
+                                setRenderLoading(false);
+                                setRenderDialogOpen(true);
+                            }}
+                            sx={{
+                                borderColor: "#b0b0b0",
+                                color: "#1976d2",
+                                background: "#f5fafd",
+                                "&:hover": {
+                                    background: "#e3f1fb",
+                                    borderColor: "#1976d2",
+                                },
+                            }}
+                        >
+                            {renderLoading ? (
+                                <>
+                                    <CircularProgress size={18} sx={{ mr: 1 }} />
+                                    Rendering...
+                                </>
+                            ) : (
+                                "Preview Rendered Notice"
+                            )}
+                        </Button>
+                    </Box>
+                    <Box sx={{ height: 80 }} />
                     {/* Download Patched Notice Section */}
-                    <h2>Download Patched Notice</h2>
                     <Button
                         variant="contained"
                         color="success"
@@ -1020,6 +1137,53 @@ function App() {
                     >
                         Download Patched Notice
                     </Button>
+                    {/* Rendered Notice Dialog (shared for both original and patched) */}
+                    <Dialog
+                        open={renderDialogOpen}
+                        onClose={() => setRenderDialogOpen(false)}
+                        maxWidth="lg"
+                        fullWidth
+                        PaperProps={{ sx: { background: "#fff" } }}
+                    >
+                        <DialogTitle>Rendered Notice Preview</DialogTitle>
+                        <DialogContent
+                            dividers
+                            sx={{
+                                minHeight: 300,
+                                maxHeight: 700,
+                                overflow: "auto",
+                                background: "#fff",
+                                p: 0,
+                            }}
+                        >
+                            {renderLoading ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 300,
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            ) : renderError ? (
+                                <Alert severity="error" sx={{ m: 2 }}>
+                                    {renderError}
+                                </Alert>
+                            ) : renderHtml ? (
+                                <div
+                                    style={{ width: "100%", height: "100%" }}
+                                    dangerouslySetInnerHTML={{ __html: renderHtml }}
+                                />
+                            ) : (
+                                <Typography sx={{ m: 2, color: "#888" }}>No preview available.</Typography>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
             )}
         </div>
