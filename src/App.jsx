@@ -234,6 +234,28 @@ function App() {
         setRenderDialogOpen(true);
     };
 
+    // Handler for Validate Notice button (step 4)
+    const handleValidateNotice = async () => {
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/validate-notice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    noticeXml: patchedXml,
+                }),
+            });
+            const xml = await response.text();
+            // Log first 50 chars and status code
+            console.log(
+                `[Validate Notice] Status: ${response.status}, Body: ${xml.slice(0, 50)}${xml.length > 50 ? "..." : ""}`
+            );
+        } catch (err) {
+            console.log("[Validate Notice] Error:", err);
+        }
+    };
+
     return (
         <div className="homepage-container">
             <h1>eForms GPP Tool</h1>
@@ -1112,6 +1134,26 @@ function App() {
                             ) : (
                                 "Preview Rendered Notice"
                             )}
+                        </Button>
+                    </Box>
+                    <Box sx={{ height: 40 }} />
+                    {/* Validate Notice button */}
+                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                        <Button
+                            variant="outlined"
+                            disabled={!patchedXml}
+                            onClick={handleValidateNotice}
+                            sx={{
+                                borderColor: "#ff9800",
+                                color: "#ff9800",
+                                background: "#fff8e1",
+                                "&:hover": {
+                                    background: "#ffe0b2",
+                                    borderColor: "#fb8c00",
+                                },
+                            }}
+                        >
+                            Validate Notice
                         </Button>
                     </Box>
                     <Box sx={{ height: 80 }} />
