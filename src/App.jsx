@@ -339,7 +339,21 @@ function App() {
                             style={{ display: "none" }}
                             onChange={handleFileChange}
                         />
-                        <Button variant="contained" color="primary" onClick={handleAreaClick} sx={{ mt: 2, mb: 1 }}>
+                        <Button
+                            variant="contained"
+                            onClick={handleAreaClick}
+                            sx={{
+                                mt: 2,
+                                mb: 1,
+                                background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                color: "white",
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                            }}
+                        >
                             Select XML File
                         </Button>
                     </div>
@@ -456,7 +470,23 @@ function App() {
                             </Box>
                             <Box sx={{ height: 80 }} />
                             <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleAnalyzeNotice}
+                                    sx={{
+                                        background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                        color: "white",
+                                        px: 4,
+                                        py: 1.2,
+                                        fontSize: "1.1rem",
+                                        fontWeight: 600,
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                            transform: "translateY(-2px)",
+                                            boxShadow: "0 6px 16px rgba(76, 175, 80, 0.3)",
+                                        },
+                                    }}
+                                >
                                     Analyze Notice
                                 </Button>
                             </Box>
@@ -468,7 +498,7 @@ function App() {
                         onClose={() => setRenderDialogOpen(false)}
                         maxWidth="lg"
                         fullWidth
-                        PaperProps={{ sx: { background: "#fff" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Rendered Notice Preview</DialogTitle>
                         <DialogContent
@@ -524,7 +554,7 @@ function App() {
                                                 mb: 2,
                                                 borderRadius: 2,
                                                 boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                                background: "#d3d3d3", // just a little gray
+                                                background: "#f0f8f0", // light green background
                                                 border: "1px solid #e0e7ef",
                                                 transition: "box-shadow 0.2s",
                                                 "&:hover": {
@@ -595,7 +625,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#d3d3d3", // just a little gray
+                                            background: "#f0f8f0", // light green background
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -670,7 +700,7 @@ function App() {
                         onClose={handleDetailsClose}
                         maxWidth="sm"
                         fullWidth
-                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Details</DialogTitle>
                         <DialogContent dividers>
@@ -781,7 +811,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#d3d3d3", // match criteria/documents item bg
+                                            background: "#f0f8f0", // match criteria/documents item bg
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -858,7 +888,7 @@ function App() {
                         onClose={handlePatchDetailsClose}
                         maxWidth="sm"
                         fullWidth
-                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Patch Details</DialogTitle>
                         <DialogContent dividers>
@@ -975,7 +1005,11 @@ function App() {
                 </div>
             )}
             {/* Analyze Notice Dialog */}
-            <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: { background: "#d3d3d3" } }}>
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
+            >
                 <DialogTitle>Notice Analysis Result</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ whiteSpace: "pre-wrap" }}>
@@ -997,7 +1031,19 @@ function App() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose}>Close</Button>
-                    <Button variant="contained" color="primary" onClick={handleNextStep}>
+                    <Button
+                        variant="contained"
+                        onClick={handleNextStep}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
+                        }}
+                    >
                         Next: Select Criteria
                     </Button>
                 </DialogActions>
@@ -1006,7 +1052,7 @@ function App() {
             <Dialog
                 open={patchDialogOpen}
                 onClose={handlePatchDialogClose}
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
             >
                 <DialogTitle>Suggest Patches</DialogTitle>
                 <DialogContent>
@@ -1042,7 +1088,7 @@ function App() {
             <Dialog
                 open={applyDialogOpen}
                 onClose={handleApplyDialogClose}
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
             >
                 <DialogTitle>Apply Patches</DialogTitle>
                 <DialogContent>
@@ -1298,7 +1344,7 @@ function App() {
                 onClose={handleValidationDialogClose}
                 maxWidth="md"
                 fullWidth
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
             >
                 <DialogTitle>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -1420,7 +1466,19 @@ function App() {
                 <DialogActions>
                     <Button onClick={handleValidationDialogClose}>Close</Button>
                     {validationResult?.success && validationResult.data?.validationReport && (
-                        <Button variant="contained" color="primary" onClick={handleDownloadValidationReport}>
+                        <Button
+                            variant="contained"
+                            onClick={handleDownloadValidationReport}
+                            sx={{
+                                background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                color: "white",
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                            }}
+                        >
                             Download Validation Report
                         </Button>
                     )}
