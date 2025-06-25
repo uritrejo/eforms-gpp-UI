@@ -1,6 +1,6 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
+import SustainabilityIcon from "./components/SustainabilityIcon";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -17,7 +17,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-import ReactDiffViewer from "react-diff-viewer";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
@@ -317,7 +316,7 @@ function App() {
         <div className="homepage-container">
             <h1>eForms GPP Tool</h1>
             <div className="logo-area">
-                <img src={reactLogo} alt="App Logo" className="app-logo" />
+                <SustainabilityIcon />
             </div>
             <p className="description">Identify GPP criteria and apply them to your eForm notice.</p>
             {/* Material UI Stepper */}

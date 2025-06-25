@@ -12,10 +12,10 @@
     transition: filter 300ms;
 }
 .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+    filter: drop-shadow(0 0 2em #4CAF50aa);
 }
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
+.logo.sustainability:hover {
+    filter: drop-shadow(0 0 2em #66BB6Aaa);
 }
 
 @keyframes logo-spin {
@@ -27,9 +27,22 @@
     }
 }
 
+/* Remove the react-specific animation and replace with a gentle sway */
 @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
+    .logo.sustainability {
+        animation: gentle-sway 4s ease-in-out infinite;
+    }
+}
+
+@keyframes gentle-sway {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(2deg);
+    }
+    75% {
+        transform: rotate(-2deg);
     }
 }
 
