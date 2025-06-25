@@ -289,11 +289,12 @@ function App() {
                                     mx: "auto",
                                     textAlign: "center",
                                     fontWeight: 400,
-                                    color: "#888",
+                                    color: "#b0b0b0", // lighter gray for the label
                                     fontSize: "0.95rem",
                                     letterSpacing: 1,
                                 }}
                             >
+                                <Box sx={{ height: 40 }} />
                                 Raw XML Preview:
                             </Box>
                             <Box
@@ -317,7 +318,7 @@ function App() {
                                 <pre
                                     style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
                                     dangerouslySetInnerHTML={{
-                                        __html: fileContent // <-- use the full XML content here
+                                        __html: fileContent
                                             .replace(/&/g, "&amp;")
                                             .replace(/</g, "&lt;")
                                             .replace(/>/g, "&gt;")
@@ -347,15 +348,23 @@ function App() {
                                     }}
                                 />
                             </Box>
-                            <Box sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}>
-                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
-                                    Analyze Notice
-                                </Button>
+                            {/* Preview Rendered Notice button - complementary action */}
+                            <Box sx={{ height: 40 }} />
+                            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                                 <Button
                                     variant="outlined"
                                     color="primary"
                                     disabled={!fileContent || renderLoading}
                                     onClick={handleRenderPreview}
+                                    sx={{
+                                        borderColor: "#b0b0b0",
+                                        color: "#1976d2",
+                                        background: "#f5fafd",
+                                        "&:hover": {
+                                            background: "#e3f1fb",
+                                            borderColor: "#1976d2",
+                                        },
+                                    }}
                                 >
                                     {renderLoading ? (
                                         <>
@@ -365,6 +374,12 @@ function App() {
                                     ) : (
                                         "Preview Rendered Notice"
                                     )}
+                                </Button>
+                            </Box>
+                            <Box sx={{ height: 80 }} />
+                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
+                                    Analyze Notice
                                 </Button>
                             </Box>
                         </>
