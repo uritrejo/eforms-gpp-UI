@@ -18,6 +18,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import ReactDiffViewer from "react-diff-viewer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
 
@@ -46,6 +47,10 @@ function App() {
     const [patchDetailsItem, setPatchDetailsItem] = useState(null);
     const [patchedXml, setPatchedXml] = useState(""); // Add this state
     const [diffModalOpen, setDiffModalOpen] = useState(false);
+    const [renderDialogOpen, setRenderDialogOpen] = useState(false);
+    const [renderHtml, setRenderHtml] = useState("");
+    const [renderLoading, setRenderLoading] = useState(false);
+    const [renderError, setRenderError] = useState("");
 
     const SNIPPET_LENGTH = 2000;
 
@@ -197,6 +202,38 @@ function App() {
 
     const handleApplyDialogClose = () => setApplyDialogOpen(false);
 
+    // Helper to base64 encode Unicode strings
+    function base64EncodeUnicode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    // Handler for "Preview Rendered Notice"
+    const handleRenderPreview = async () => {
+        setRenderLoading(true);
+        setRenderError("");
+        setRenderHtml("");
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    noticeXml: fileContent,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const html = await response.text();
+            setRenderHtml(html);
+        } catch (err) {
+            setRenderError("Failed to render notice: " + err.message);
+        }
+        setRenderLoading(false);
+        setRenderDialogOpen(true);
+    };
+
     function formatXml(xml) {
         // Remove leading/trailing whitespace
         xml = xml.trim();
@@ -282,7 +319,7 @@ function App() {
                                     letterSpacing: 1,
                                 }}
                             >
-                                Preview:
+                                XML Preview:
                             </Box>
                             <Box
                                 sx={{
@@ -340,11 +377,75 @@ function App() {
                                     }}
                                 />
                             </Box>
-                            <Button variant="contained" color="success" sx={{ mt: 2 }} onClick={handleAnalyzeNotice}>
-                                Analyze Notice
-                            </Button>
+                            <Box sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}>
+                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
+                                    Analyze Notice
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={!fileContent || renderLoading}
+                                    onClick={handleRenderPreview}
+                                >
+                                    {renderLoading ? (
+                                        <>
+                                            <CircularProgress size={18} sx={{ mr: 1 }} />
+                                            Rendering...
+                                        </>
+                                    ) : (
+                                        "Preview Rendered Notice"
+                                    )}
+                                </Button>
+                            </Box>
                         </>
                     )}
+                    {/* Rendered Notice Dialog */}
+                    <Dialog
+                        open={renderDialogOpen}
+                        onClose={() => setRenderDialogOpen(false)}
+                        maxWidth="lg"
+                        fullWidth
+                        PaperProps={{ sx: { background: "#fff" } }}
+                    >
+                        <DialogTitle>Rendered Notice Preview</DialogTitle>
+                        <DialogContent
+                            dividers
+                            sx={{
+                                minHeight: 300,
+                                maxHeight: 700,
+                                overflow: "auto",
+                                background: "#fff",
+                                p: 0,
+                            }}
+                        >
+                            {renderLoading ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 300,
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            ) : renderError ? (
+                                <Alert severity="error" sx={{ m: 2 }}>
+                                    {renderError}
+                                </Alert>
+                            ) : renderHtml ? (
+                                <div
+                                    style={{ width: "100%", height: "100%" }}
+                                    dangerouslySetInnerHTML={{ __html: renderHtml }}
+                                />
+                            ) : (
+                                <Typography sx={{ m: 2, color: "#888" }}>No preview available.</Typography>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
                 </>
             ) : step === 1 ? (
                 <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
