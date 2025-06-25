@@ -314,7 +314,21 @@ function App() {
 
     return (
         <div className="homepage-container">
-            <h1>eForms GPP Tool</h1>
+            <h1
+                style={{
+                    background: "linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #66bb6a 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    fontSize: "3rem",
+                    fontWeight: 700,
+                    textShadow: "0 2px 4px rgba(76, 175, 80, 0.2)",
+                    letterSpacing: "0.5px",
+                    marginBottom: "1rem",
+                }}
+            >
+                eForms GPP Tool
+            </h1>
             <div className="logo-area">
                 <SustainabilityIcon />
             </div>
@@ -380,8 +394,8 @@ function App() {
                                     maxWidth: 500,
                                     mx: "auto",
                                     textAlign: "center",
-                                    fontWeight: 400,
-                                    color: "#b0b0b0", // lighter gray for the label
+                                    fontWeight: 600,
+                                    color: "#2e7d32", // dark green for better visibility
                                     fontSize: "0.95rem",
                                     letterSpacing: 1,
                                 }}
@@ -426,12 +440,12 @@ function App() {
                                                         '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                                     );
                                                     return (
-                                                        '<span style="color:#1976d2;">' +
+                                                        '<span style="color:#2e7d32;">' +
                                                         open +
                                                         tag +
                                                         "</span>" +
                                                         attrsHighlighted +
-                                                        '<span style="color:#1976d2;">' +
+                                                        '<span style="color:#2e7d32;">' +
                                                         close +
                                                         "</span>"
                                                     );
@@ -579,7 +593,7 @@ function App() {
                                             <ListItemText
                                                 primary={
                                                     <span
-                                                        style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}
+                                                        style={{ fontWeight: 600, fontSize: "1rem", color: "#2e7d32" }}
                                                     >
                                                         {doc.name}
                                                     </span>
@@ -663,7 +677,7 @@ function App() {
                                     >
                                         <ListItemText
                                             primary={
-                                                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}>
+                                                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#2e7d32" }}>
                                                     {crit.id}: {crit.name}
                                                 </span>
                                             }
@@ -695,7 +709,7 @@ function App() {
                                                 edge="end"
                                                 onChange={() => handleToggleCriterion(crit.id)}
                                                 checked={selectedCriteria.includes(crit.id)}
-                                                sx={{ color: "#1976d2", ml: 1 }}
+                                                sx={{ color: "#2e7d32", ml: 1 }}
                                             />
                                         </Box>
                                     </ListItem>
@@ -729,7 +743,7 @@ function App() {
                             {detailsItem && (
                                 <Box sx={{ fontSize: "1rem", color: "#222" }}>
                                     {detailsItem.name && (
-                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#2e7d32" }}>
                                             {detailsItem.name}
                                         </Typography>
                                     )}
@@ -782,7 +796,7 @@ function App() {
                                                                     href={value}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    style={{ color: "#1976d2", wordBreak: "break-all" }}
+                                                                    style={{ color: "#2e7d32", wordBreak: "break-all" }}
                                                                 >
                                                                     {value}
                                                                 </a>
@@ -864,7 +878,7 @@ function App() {
                                         <ListItemText
                                             primary={
                                                 <span
-                                                    style={{ fontWeight: 600, fontSize: "0.98rem", color: "#1976d2" }}
+                                                    style={{ fontWeight: 600, fontSize: "0.98rem", color: "#2e7d32" }}
                                                 >
                                                     {patch.name}
                                                 </span>
@@ -897,7 +911,7 @@ function App() {
                                                 edge="end"
                                                 onChange={() => handleTogglePatch(idx)}
                                                 checked={selectedPatches.includes(idx)}
-                                                sx={{ color: "#1976d2", ml: 1 }}
+                                                sx={{ color: "#2e7d32", ml: 1 }}
                                             />
                                         </Box>
                                     </ListItem>
@@ -931,7 +945,7 @@ function App() {
                             {patchDetailsItem && (
                                 <Box sx={{ fontSize: "1rem", color: "#222" }}>
                                     {patchDetailsItem.name && (
-                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#2e7d32" }}>
                                             {patchDetailsItem.name}
                                         </Typography>
                                     )}
@@ -1009,12 +1023,12 @@ function App() {
                                                                         '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                                                     );
                                                                     return (
-                                                                        '<span style="color:#1976d2;">' +
+                                                                        '<span style="color:#2e7d32;">' +
                                                                         open +
                                                                         tag +
                                                                         "</span>" +
                                                                         attrsHighlighted +
-                                                                        '<span style="color:#1976d2;">' +
+                                                                        '<span style="color:#2e7d32;">' +
                                                                         close +
                                                                         "</span>"
                                                                     );
@@ -1044,7 +1058,7 @@ function App() {
             <Dialog
                 open={dialogOpen}
                 onClose={handleDialogClose}
-                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
             >
                 <DialogTitle>Notice Analysis Result</DialogTitle>
                 <DialogContent>
@@ -1088,7 +1102,7 @@ function App() {
             <Dialog
                 open={patchDialogOpen}
                 onClose={handlePatchDialogClose}
-                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
             >
                 <DialogTitle>Suggest Patches</DialogTitle>
                 <DialogContent>
@@ -1124,7 +1138,7 @@ function App() {
             <Dialog
                 open={applyDialogOpen}
                 onClose={handleApplyDialogClose}
-                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
             >
                 <DialogTitle>Apply Patches</DialogTitle>
                 <DialogContent>
@@ -1163,8 +1177,8 @@ function App() {
                             maxWidth: 500,
                             mx: "auto",
                             textAlign: "center",
-                            fontWeight: 400,
-                            color: "#b0b0b0",
+                            fontWeight: 600,
+                            color: "#2e7d32",
                             fontSize: "0.95rem",
                             letterSpacing: 1,
                         }}
@@ -1208,12 +1222,12 @@ function App() {
                                                 '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                             );
                                             return (
-                                                '<span style="color:#1976d2;">' +
+                                                '<span style="color:#2e7d32;">' +
                                                 open +
                                                 tag +
                                                 "</span>" +
                                                 attrsHighlighted +
-                                                '<span style="color:#1976d2;">' +
+                                                '<span style="color:#2e7d32;">' +
                                                 close +
                                                 "</span>"
                                             );
@@ -1321,8 +1335,24 @@ function App() {
                     {/* Download Patched Notice Section */}
                     <Button
                         variant="contained"
-                        color="success"
                         disabled={!patchedXml}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            px: 4,
+                            py: 1.2,
+                            fontSize: "1.1rem",
+                            fontWeight: 600,
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-2px)",
+                                boxShadow: "0 6px 16px rgba(76, 175, 80, 0.3)",
+                            },
+                            "&:disabled": {
+                                background: "#e0e0e0",
+                                color: "#9e9e9e",
+                            },
+                        }}
                         onClick={() => {
                             // Create a blob and trigger download
                             const blob = new Blob([patchedXml], { type: "application/xml" });

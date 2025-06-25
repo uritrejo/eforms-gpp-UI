@@ -165,11 +165,11 @@ body {
 
 /* Checkbox styling */
 .MuiCheckbox-root {
-    color: #4caf50;
+    color: #2e7d32 !important;
 }
 
 .MuiCheckbox-root.Mui-checked {
-    color: #2e7d32;
+    color: #2e7d32 !important;
 }
 
 /* Paper styling */
