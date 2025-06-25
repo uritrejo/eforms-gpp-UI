@@ -558,7 +558,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                            <Button
+                                onClick={() => setRenderDialogOpen(false)}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </>
@@ -839,7 +850,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleDetailsClose}>Close</Button>
+                            <Button
+                                onClick={handleDetailsClose}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -1077,7 +1099,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handlePatchDetailsClose}>Close</Button>
+                            <Button
+                                onClick={handlePatchDetailsClose}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -1114,7 +1147,18 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDialogClose}>Close</Button>
+                    <Button
+                        onClick={handleDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     <Button
                         variant="contained"
                         onClick={handleNextStep}
@@ -1155,7 +1199,18 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handlePatchDialogClose}>Close</Button>
+                    <Button
+                        onClick={handlePatchDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     <Button
                         variant="contained"
                         onClick={() => {
@@ -1196,7 +1251,18 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleApplyDialogClose}>Close</Button>
+                    <Button
+                        onClick={handleApplyDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     <Button
                         variant="contained"
                         onClick={() => {
@@ -1464,7 +1530,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                            <Button
+                                onClick={() => setRenderDialogOpen(false)}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -1596,7 +1673,18 @@ function App() {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleValidationDialogClose}>Close</Button>
+                    <Button
+                        onClick={handleValidationDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     {validationResult?.success && validationResult.data?.validationReport && (
                         <Button
                             variant="contained"
