@@ -234,31 +234,6 @@ function App() {
         setRenderDialogOpen(true);
     };
 
-    function formatXml(xml) {
-        // Remove leading/trailing whitespace
-        xml = xml.trim();
-        // Insert line breaks
-        let formatted = "";
-        const reg = /(>)(<)(\/*)/g;
-        xml = xml.replace(reg, "$1\n$2$3");
-        let pad = 0;
-        xml.split("\n").forEach((node) => {
-            let indent = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
-                indent = 0;
-            } else if (node.match(/^<\/\w/)) {
-                if (pad !== 0) pad -= 1;
-            } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
-                indent = 1;
-            } else {
-                indent = 0;
-            }
-            formatted += "  ".repeat(pad) + node + "\n";
-            pad += indent;
-        });
-        return formatted.trim();
-    }
-
     return (
         <div className="homepage-container">
             <h1>eForms GPP Tool</h1>
@@ -319,7 +294,7 @@ function App() {
                                     letterSpacing: 1,
                                 }}
                             >
-                                XML Preview:
+                                Raw XML Preview:
                             </Box>
                             <Box
                                 sx={{
@@ -335,45 +310,40 @@ function App() {
                                     overflowX: "auto",
                                     border: "1px solid #e0e0e0",
                                     textAlign: "left",
+                                    maxHeight: 160,
+                                    overflowY: "auto",
                                 }}
                             >
                                 <pre
                                     style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
                                     dangerouslySetInnerHTML={{
-                                        __html:
-                                            fileSnippet
-                                                .replace(/&/g, "&amp;")
-                                                .replace(/</g, "&lt;")
-                                                .replace(/>/g, "&gt;")
-                                                // Highlight comments
-                                                .replace(
-                                                    /(&lt;!--[\s\S]*?--&gt;)/g,
-                                                    '<span style="color:#999;">$1</span>'
-                                                )
-                                                // Highlight tags and attributes
-                                                .replace(
-                                                    /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
-                                                    function (_, open, tag, attrs, close) {
-                                                        // Highlight attributes and values
-                                                        const attrsHighlighted = attrs.replace(
-                                                            /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
-                                                            '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
-                                                        );
-                                                        return (
-                                                            '<span style="color:#1976d2;">' +
-                                                            open +
-                                                            tag +
-                                                            "</span>" +
-                                                            attrsHighlighted +
-                                                            '<span style="color:#1976d2;">' +
-                                                            close +
-                                                            "</span>"
-                                                        );
-                                                    }
-                                                ) +
-                                            (fileSnippet.length === SNIPPET_LENGTH
-                                                ? `<br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span>`
-                                                : ""),
+                                        __html: fileContent // <-- use the full XML content here
+                                            .replace(/&/g, "&amp;")
+                                            .replace(/</g, "&lt;")
+                                            .replace(/>/g, "&gt;")
+                                            // Highlight comments
+                                            .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#999;">$1</span>')
+                                            // Highlight tags and attributes
+                                            .replace(
+                                                /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                                function (_, open, tag, attrs, close) {
+                                                    // Highlight attributes and values
+                                                    const attrsHighlighted = attrs.replace(
+                                                        /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                        '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                                    );
+                                                    return (
+                                                        '<span style="color:#1976d2;">' +
+                                                        open +
+                                                        tag +
+                                                        "</span>" +
+                                                        attrsHighlighted +
+                                                        '<span style="color:#1976d2;">' +
+                                                        close +
+                                                        "</span>"
+                                                    );
+                                                }
+                                            ),
                                     }}
                                 />
                             </Box>
