@@ -3,6 +3,14 @@
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
+    min-height: 100vh;
+}
+
+/* Add full-body background */
+body {
+    background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+    margin: 0;
+    min-height: 100vh;
 }
 
 .logo {
@@ -12,10 +20,10 @@
     transition: filter 300ms;
 }
 .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+    filter: drop-shadow(0 0 2em #4CAF50aa);
 }
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
+.logo.sustainability:hover {
+    filter: drop-shadow(0 0 2em #66BB6Aaa);
 }
 
 @keyframes logo-spin {
@@ -27,9 +35,22 @@
     }
 }
 
+/* Remove the react-specific animation and replace with a gentle sway */
 @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
+    .logo.sustainability {
+        animation: gentle-sway 4s ease-in-out infinite;
+    }
+}
+
+@keyframes gentle-sway {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(2deg);
+    }
+    75% {
+        transform: rotate(-2deg);
     }
 }
 
@@ -43,28 +64,116 @@
 
 /* Make the stepper (Tabs) buttons background a bit gray/white-ish and improve contrast */
 .MuiTabs-root {
-    background: #f5f5f7a2;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px 0 rgba(60, 72, 88, 0.04);
+    background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 50%, #dff2df 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px 0 rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.1);
 }
 
 .MuiTab-root {
-    background: #f5f5f7;
-    color: #222;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+    color: #2e7d32;
     font-weight: 600;
-    border-radius: 8px 8px 0 0;
+    border-radius: 8px;
     min-height: 48px;
-    transition: background 0.2s;
+    margin: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .MuiTab-root.Mui-selected {
-    background: #ffffffd7;
-    color: #1976d2;
-    box-shadow: 0 2px 8px 0 rgba(60, 72, 88, 0.07);
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px 0 rgba(76, 175, 80, 0.3);
+    transform: translateY(-1px);
+}
+
+.MuiTab-root:hover:not(.Mui-selected) {
+    background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px 0 rgba(76, 175, 80, 0.2);
 }
 
 .MuiTabs-indicator {
-    background: #1976d2;
+    background: linear-gradient(90deg, #4caf50, #66bb6a);
     height: 3px;
-    border-radius: 2px 2px 0 0;
+    border-radius: 2px;
+}
+
+/* Additional sustainability styling */
+.homepage-container {
+    background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1);
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.homepage-container h1 {
+    color: #2e7d32;
+    text-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+    margin-bottom: 1rem;
+}
+
+.homepage-container .description {
+    color: #388e3c;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Alert styling for sustainability theme */
+.MuiAlert-root {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+}
+
+.MuiAlert-standardSuccess {
+    background: linear-gradient(135deg, #e8f3e8 0%, #f1f8e9 100%);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.MuiAlert-standardInfo {
+    background: linear-gradient(135deg, #f0f8f0 0%, #f8fff8 100%);
+    border: 1px solid rgba(76, 175, 80, 0.15);
+}
+
+/* Dialog styling */
+.MuiDialog-paper {
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.15);
+}
+
+.MuiDialogTitle-root {
+    color: #2e7d32;
+    font-weight: 600;
+    background: linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%);
+    border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+/* List item styling */
+.MuiListItem-root {
+    border-radius: 8px;
+    margin: 4px 0;
+    transition: all 0.2s ease;
+}
+
+.MuiListItem-root:hover {
+    background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+    transform: translateX(4px);
+}
+
+/* Checkbox styling */
+.MuiCheckbox-root {
+    color: #2e7d32 !important;
+}
+
+.MuiCheckbox-root.Mui-checked {
+    color: #2e7d32 !important;
+}
+
+/* Paper styling */
+.MuiPaper-root {
+    background: linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%);
+    border: 1px solid rgba(76, 175, 80, 0.1);
 }

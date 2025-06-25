@@ -1,6 +1,6 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
+import SustainabilityIcon from "./components/SustainabilityIcon";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -17,7 +17,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-import ReactDiffViewer from "react-diff-viewer";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
@@ -315,9 +314,23 @@ function App() {
 
     return (
         <div className="homepage-container">
-            <h1>eForms GPP Tool</h1>
+            <h1
+                style={{
+                    background: "linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #66bb6a 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    fontSize: "3rem",
+                    fontWeight: 700,
+                    textShadow: "0 2px 4px rgba(76, 175, 80, 0.2)",
+                    letterSpacing: "0.5px",
+                    marginBottom: "1rem",
+                }}
+            >
+                eForms GPP Tool
+            </h1>
             <div className="logo-area">
-                <img src={reactLogo} alt="App Logo" className="app-logo" />
+                <SustainabilityIcon />
             </div>
             <p className="description">Identify GPP criteria and apply them to your eForm notice.</p>
             {/* Material UI Stepper */}
@@ -331,7 +344,7 @@ function App() {
             {/* Step Content */}
             {step === 0 ? (
                 <>
-                    <h2>Upload Your eForm Notice</h2>
+                    <h2 style={{ color: "#2e7d32", fontWeight: 600 }}>Upload Your eForm Notice</h2>
                     <div className="upload-area">
                         <input
                             id="file-input"
@@ -340,7 +353,21 @@ function App() {
                             style={{ display: "none" }}
                             onChange={handleFileChange}
                         />
-                        <Button variant="contained" color="primary" onClick={handleAreaClick} sx={{ mt: 2, mb: 1 }}>
+                        <Button
+                            variant="contained"
+                            onClick={handleAreaClick}
+                            sx={{
+                                mt: 2,
+                                mb: 1,
+                                background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                color: "white",
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                            }}
+                        >
                             Select XML File
                         </Button>
                     </div>
@@ -367,8 +394,8 @@ function App() {
                                     maxWidth: 500,
                                     mx: "auto",
                                     textAlign: "center",
-                                    fontWeight: 400,
-                                    color: "#b0b0b0", // lighter gray for the label
+                                    fontWeight: 600,
+                                    color: "#2e7d32", // dark green for better visibility
                                     fontSize: "0.95rem",
                                     letterSpacing: 1,
                                 }}
@@ -385,7 +412,7 @@ function App() {
                                     borderRadius: 1,
                                     p: 2,
                                     fontFamily: "monospace",
-                                    fontSize: "0.4rem",
+                                    fontSize: "0.5rem",
                                     color: "#444",
                                     overflowX: "auto",
                                     border: "1px solid #e0e0e0",
@@ -413,12 +440,12 @@ function App() {
                                                         '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                                     );
                                                     return (
-                                                        '<span style="color:#1976d2;">' +
+                                                        '<span style="color:#2e7d32;">' +
                                                         open +
                                                         tag +
                                                         "</span>" +
                                                         attrsHighlighted +
-                                                        '<span style="color:#1976d2;">' +
+                                                        '<span style="color:#2e7d32;">' +
                                                         close +
                                                         "</span>"
                                                     );
@@ -431,17 +458,25 @@ function App() {
                             <Box sx={{ height: 40 }} />
                             <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                                 <Button
-                                    variant="outlined"
-                                    color="primary"
+                                    variant="contained"
                                     disabled={!fileContent || renderLoading}
                                     onClick={handleRenderPreview}
                                     sx={{
-                                        borderColor: "#b0b0b0",
-                                        color: "#1976d2",
-                                        background: "#f5fafd",
+                                        background: "linear-gradient(135deg, #66bb6a 0%, #81c784 100%)",
+                                        color: "white",
+                                        px: 3,
+                                        py: 1,
+                                        fontSize: "0.95rem",
+                                        fontWeight: 600,
+                                        border: "1px solid #4caf50",
                                         "&:hover": {
-                                            background: "#e3f1fb",
-                                            borderColor: "#1976d2",
+                                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                            transform: "translateY(-1px)",
+                                            boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                        },
+                                        "&:disabled": {
+                                            background: "#e0e0e0",
+                                            color: "#9e9e9e",
                                         },
                                     }}
                                 >
@@ -457,7 +492,23 @@ function App() {
                             </Box>
                             <Box sx={{ height: 80 }} />
                             <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleAnalyzeNotice}
+                                    sx={{
+                                        background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                        color: "white",
+                                        px: 4,
+                                        py: 1.2,
+                                        fontSize: "1.1rem",
+                                        fontWeight: 600,
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                            transform: "translateY(-2px)",
+                                            boxShadow: "0 6px 16px rgba(76, 175, 80, 0.3)",
+                                        },
+                                    }}
+                                >
                                     Analyze Notice
                                 </Button>
                             </Box>
@@ -469,7 +520,7 @@ function App() {
                         onClose={() => setRenderDialogOpen(false)}
                         maxWidth="lg"
                         fullWidth
-                        PaperProps={{ sx: { background: "#fff" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Rendered Notice Preview</DialogTitle>
                         <DialogContent
@@ -507,7 +558,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                            <Button
+                                onClick={() => setRenderDialogOpen(false)}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </>
@@ -525,7 +587,7 @@ function App() {
                                                 mb: 2,
                                                 borderRadius: 2,
                                                 boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                                background: "#d3d3d3", // just a little gray
+                                                background: "#f0f8f0", // light green background
                                                 border: "1px solid #e0e7ef",
                                                 transition: "box-shadow 0.2s",
                                                 "&:hover": {
@@ -542,7 +604,7 @@ function App() {
                                             <ListItemText
                                                 primary={
                                                     <span
-                                                        style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}
+                                                        style={{ fontWeight: 600, fontSize: "1rem", color: "#2e7d32" }}
                                                     >
                                                         {doc.name}
                                                     </span>
@@ -556,8 +618,20 @@ function App() {
                                             <Box sx={{ mt: 1, textAlign: "right" }}>
                                                 <Button
                                                     size="small"
-                                                    variant="outlined"
-                                                    sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                    variant="contained"
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        textTransform: "none",
+                                                        fontSize: "0.85rem",
+                                                        background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                        color: "white",
+                                                        "&:hover": {
+                                                            background:
+                                                                "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                            transform: "translateY(-1px)",
+                                                            boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                        },
+                                                    }}
                                                     onClick={() => handleViewDetails(doc)}
                                                 >
                                                     View Details
@@ -577,10 +651,24 @@ function App() {
                             Please select the criteria that you wish to insert into the notice.
                         </p>
                         <Button
-                            variant="outlined"
-                            color="secondary"
+                            variant="contained"
                             size="small"
-                            sx={{ ml: 2, textTransform: "none" }}
+                            sx={{
+                                ml: 2,
+                                textTransform: "none",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                fontWeight: 600,
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 3px 8px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
+                                },
+                            }}
                             onClick={() => setSelectedCriteria([])}
                             disabled={selectedCriteria.length === 0}
                         >
@@ -596,7 +684,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#d3d3d3", // just a little gray
+                                            background: "#f0f8f0", // light green background
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -612,7 +700,7 @@ function App() {
                                     >
                                         <ListItemText
                                             primary={
-                                                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#1976d2" }}>
+                                                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#2e7d32" }}>
                                                     {crit.id}: {crit.name}
                                                 </span>
                                             }
@@ -634,8 +722,19 @@ function App() {
                                         >
                                             <Button
                                                 size="small"
-                                                variant="outlined"
-                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                variant="contained"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontSize: "0.85rem",
+                                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                    color: "white",
+                                                    "&:hover": {
+                                                        background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                        transform: "translateY(-1px)",
+                                                        boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                    },
+                                                }}
                                                 onClick={() => handleViewDetails(crit)}
                                             >
                                                 View Details
@@ -644,7 +743,7 @@ function App() {
                                                 edge="end"
                                                 onChange={() => handleToggleCriterion(crit.id)}
                                                 checked={selectedCriteria.includes(crit.id)}
-                                                sx={{ color: "#1976d2", ml: 1 }}
+                                                sx={{ color: "#2e7d32", ml: 1 }}
                                             />
                                         </Box>
                                     </ListItem>
@@ -671,14 +770,14 @@ function App() {
                         onClose={handleDetailsClose}
                         maxWidth="sm"
                         fullWidth
-                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Details</DialogTitle>
                         <DialogContent dividers>
                             {detailsItem && (
                                 <Box sx={{ fontSize: "1rem", color: "#222" }}>
                                     {detailsItem.name && (
-                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#2e7d32" }}>
                                             {detailsItem.name}
                                         </Typography>
                                     )}
@@ -731,7 +830,7 @@ function App() {
                                                                     href={value}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    style={{ color: "#1976d2", wordBreak: "break-all" }}
+                                                                    style={{ color: "#2e7d32", wordBreak: "break-all" }}
                                                                 >
                                                                     {value}
                                                                 </a>
@@ -751,7 +850,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleDetailsClose}>Close</Button>
+                            <Button
+                                onClick={handleDetailsClose}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -763,10 +873,24 @@ function App() {
                             Please select the patches that you wish to apply to your notice.
                         </p>
                         <Button
-                            variant="outlined"
-                            color="secondary"
+                            variant="contained"
                             size="small"
-                            sx={{ ml: 2, textTransform: "none" }}
+                            sx={{
+                                ml: 2,
+                                textTransform: "none",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                fontWeight: 600,
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 3px 8px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
+                                },
+                            }}
                             onClick={handleClearPatchSelection}
                             disabled={selectedPatches.length === 0}
                         >
@@ -782,7 +906,7 @@ function App() {
                                             mb: 2,
                                             borderRadius: 2,
                                             boxShadow: "0 2px 8px 0 rgba(60,72,88,0.07)",
-                                            background: "#d3d3d3", // match criteria/documents item bg
+                                            background: "#f0f8f0", // match criteria/documents item bg
                                             border: "1px solid #e0e7ef",
                                             transition: "box-shadow 0.2s",
                                             "&:hover": {
@@ -799,7 +923,7 @@ function App() {
                                         <ListItemText
                                             primary={
                                                 <span
-                                                    style={{ fontWeight: 600, fontSize: "0.98rem", color: "#1976d2" }}
+                                                    style={{ fontWeight: 600, fontSize: "0.98rem", color: "#2e7d32" }}
                                                 >
                                                     {patch.name}
                                                 </span>
@@ -822,8 +946,19 @@ function App() {
                                         >
                                             <Button
                                                 size="small"
-                                                variant="outlined"
-                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                variant="contained"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontSize: "0.85rem",
+                                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                    color: "white",
+                                                    "&:hover": {
+                                                        background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                        transform: "translateY(-1px)",
+                                                        boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                    },
+                                                }}
                                                 onClick={() => handlePatchViewDetails(patch)}
                                             >
                                                 View Details
@@ -832,7 +967,7 @@ function App() {
                                                 edge="end"
                                                 onChange={() => handleTogglePatch(idx)}
                                                 checked={selectedPatches.includes(idx)}
-                                                sx={{ color: "#1976d2", ml: 1 }}
+                                                sx={{ color: "#2e7d32", ml: 1 }}
                                             />
                                         </Box>
                                     </ListItem>
@@ -859,14 +994,14 @@ function App() {
                         onClose={handlePatchDetailsClose}
                         maxWidth="sm"
                         fullWidth
-                        PaperProps={{ sx: { background: "#d3d3d3" } }}
+                        PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
                     >
                         <DialogTitle>Patch Details</DialogTitle>
                         <DialogContent dividers>
                             {patchDetailsItem && (
                                 <Box sx={{ fontSize: "1rem", color: "#222" }}>
                                     {patchDetailsItem.name && (
-                                        <Typography variant="h6" sx={{ mb: 1, color: "#1976d2" }}>
+                                        <Typography variant="h6" sx={{ mb: 1, color: "#2e7d32" }}>
                                             {patchDetailsItem.name}
                                         </Typography>
                                     )}
@@ -944,12 +1079,12 @@ function App() {
                                                                         '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                                                     );
                                                                     return (
-                                                                        '<span style="color:#1976d2;">' +
+                                                                        '<span style="color:#2e7d32;">' +
                                                                         open +
                                                                         tag +
                                                                         "</span>" +
                                                                         attrsHighlighted +
-                                                                        '<span style="color:#1976d2;">' +
+                                                                        '<span style="color:#2e7d32;">' +
                                                                         close +
                                                                         "</span>"
                                                                     );
@@ -964,7 +1099,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handlePatchDetailsClose}>Close</Button>
+                            <Button
+                                onClick={handlePatchDetailsClose}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -976,7 +1122,11 @@ function App() {
                 </div>
             )}
             {/* Analyze Notice Dialog */}
-            <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: { background: "#d3d3d3" } }}>
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
+            >
                 <DialogTitle>Notice Analysis Result</DialogTitle>
                 <DialogContent>
                     <Typography sx={{ whiteSpace: "pre-wrap" }}>
@@ -997,8 +1147,31 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDialogClose}>Close</Button>
-                    <Button variant="contained" color="primary" onClick={handleNextStep}>
+                    <Button
+                        onClick={handleDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleNextStep}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
+                        }}
+                    >
                         Next: Select Criteria
                     </Button>
                 </DialogActions>
@@ -1007,7 +1180,7 @@ function App() {
             <Dialog
                 open={patchDialogOpen}
                 onClose={handlePatchDialogClose}
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
             >
                 <DialogTitle>Suggest Patches</DialogTitle>
                 <DialogContent>
@@ -1026,13 +1199,32 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handlePatchDialogClose}>Close</Button>
+                    <Button
+                        onClick={handlePatchDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={() => {
                             setPatchDialogOpen(false);
                             setStep(2); // Go to "Select Patches" step
+                        }}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
                         }}
                     >
                         Next: Select Patches
@@ -1043,7 +1235,7 @@ function App() {
             <Dialog
                 open={applyDialogOpen}
                 onClose={handleApplyDialogClose}
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #e8f5e8 0%, #dcedc8 100%)" } }}
             >
                 <DialogTitle>Apply Patches</DialogTitle>
                 <DialogContent>
@@ -1059,13 +1251,32 @@ function App() {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleApplyDialogClose}>Close</Button>
+                    <Button
+                        onClick={handleApplyDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={() => {
                             setApplyDialogOpen(false);
                             setStep(3); // Go to "Review & Download" step
+                        }}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
                         }}
                     >
                         Next: Review & Download
@@ -1082,8 +1293,8 @@ function App() {
                             maxWidth: 500,
                             mx: "auto",
                             textAlign: "center",
-                            fontWeight: 400,
-                            color: "#b0b0b0",
+                            fontWeight: 600,
+                            color: "#2e7d32",
                             fontSize: "0.95rem",
                             letterSpacing: 1,
                         }}
@@ -1099,7 +1310,7 @@ function App() {
                             borderRadius: 1,
                             p: 2,
                             fontFamily: "monospace",
-                            fontSize: "0.4rem",
+                            fontSize: "0.5rem",
                             color: "#444",
                             overflowX: "auto",
                             border: "1px solid #e0e0e0",
@@ -1127,12 +1338,12 @@ function App() {
                                                 '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
                                             );
                                             return (
-                                                '<span style="color:#1976d2;">' +
+                                                '<span style="color:#2e7d32;">' +
                                                 open +
                                                 tag +
                                                 "</span>" +
                                                 attrsHighlighted +
-                                                '<span style="color:#1976d2;">' +
+                                                '<span style="color:#2e7d32;">' +
                                                 close +
                                                 "</span>"
                                             );
@@ -1145,8 +1356,7 @@ function App() {
                     <Box sx={{ height: 40 }} />
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <Button
-                            variant="outlined"
-                            color="primary"
+                            variant="contained"
                             disabled={!patchedXml || renderLoading}
                             onClick={async () => {
                                 setRenderLoading(true);
@@ -1174,12 +1384,21 @@ function App() {
                                 setRenderDialogOpen(true);
                             }}
                             sx={{
-                                borderColor: "#b0b0b0",
-                                color: "#1976d2",
-                                background: "#f5fafd",
+                                background: "linear-gradient(135deg, #66bb6a 0%, #81c784 100%)",
+                                color: "white",
+                                px: 3,
+                                py: 1,
+                                fontSize: "0.95rem",
+                                fontWeight: 600,
+                                border: "1px solid #4caf50",
                                 "&:hover": {
-                                    background: "#e3f1fb",
-                                    borderColor: "#1976d2",
+                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
                                 },
                             }}
                         >
@@ -1197,16 +1416,24 @@ function App() {
                     {/* Validate Notice button */}
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             disabled={!patchedXml || validationLoading}
                             onClick={handleValidateNotice}
                             sx={{
-                                borderColor: "#ff9800",
-                                color: "#ff9800",
-                                background: "#fff8e1",
+                                background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                                color: "white",
+                                px: 3,
+                                py: 1,
+                                fontSize: "0.95rem",
+                                fontWeight: 600,
                                 "&:hover": {
-                                    background: "#ffe0b2",
-                                    borderColor: "#fb8c00",
+                                    background: "linear-gradient(135deg, #f57c00 0%, #ff9800 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(255, 152, 0, 0.3)",
+                                },
+                                "&:disabled": {
+                                    background: "#e0e0e0",
+                                    color: "#9e9e9e",
                                 },
                             }}
                         >
@@ -1224,8 +1451,24 @@ function App() {
                     {/* Download Patched Notice Section */}
                     <Button
                         variant="contained"
-                        color="success"
                         disabled={!patchedXml}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            px: 4,
+                            py: 1.2,
+                            fontSize: "1.1rem",
+                            fontWeight: 600,
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-2px)",
+                                boxShadow: "0 6px 16px rgba(76, 175, 80, 0.3)",
+                            },
+                            "&:disabled": {
+                                background: "#e0e0e0",
+                                color: "#9e9e9e",
+                            },
+                        }}
                         onClick={() => {
                             // Create a blob and trigger download
                             const blob = new Blob([patchedXml], { type: "application/xml" });
@@ -1287,7 +1530,18 @@ function App() {
                             )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                            <Button
+                                onClick={() => setRenderDialogOpen(false)}
+                                sx={{
+                                    color: "#d32f2f",
+                                    "&:hover": {
+                                        backgroundColor: "#ffebee",
+                                        color: "#c62828",
+                                    },
+                                }}
+                            >
+                                Close
+                            </Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
@@ -1299,7 +1553,7 @@ function App() {
                 onClose={handleValidationDialogClose}
                 maxWidth="md"
                 fullWidth
-                PaperProps={{ sx: { background: "#d3d3d3" } }}
+                PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
             >
                 <DialogTitle>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -1419,9 +1673,32 @@ function App() {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleValidationDialogClose}>Close</Button>
+                    <Button
+                        onClick={handleValidationDialogClose}
+                        sx={{
+                            color: "#d32f2f",
+                            "&:hover": {
+                                backgroundColor: "#ffebee",
+                                color: "#c62828",
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
                     {validationResult?.success && validationResult.data?.validationReport && (
-                        <Button variant="contained" color="primary" onClick={handleDownloadValidationReport}>
+                        <Button
+                            variant="contained"
+                            onClick={handleDownloadValidationReport}
+                            sx={{
+                                background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                color: "white",
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                    transform: "translateY(-1px)",
+                                    boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                                },
+                            }}
+                        >
                             Download Validation Report
                         </Button>
                     )}
