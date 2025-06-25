@@ -18,6 +18,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import ReactDiffViewer from "react-diff-viewer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const steps = ["Upload Notice", "Select Criteria", "Select Patches", "Review & Download"];
 
@@ -46,6 +47,10 @@ function App() {
     const [patchDetailsItem, setPatchDetailsItem] = useState(null);
     const [patchedXml, setPatchedXml] = useState(""); // Add this state
     const [diffModalOpen, setDiffModalOpen] = useState(false);
+    const [renderDialogOpen, setRenderDialogOpen] = useState(false);
+    const [renderHtml, setRenderHtml] = useState("");
+    const [renderLoading, setRenderLoading] = useState(false);
+    const [renderError, setRenderError] = useState("");
 
     const SNIPPET_LENGTH = 2000;
 
@@ -197,34 +202,63 @@ function App() {
 
     const handleApplyDialogClose = () => setApplyDialogOpen(false);
 
-    function formatXml(xml) {
-        // Remove leading/trailing whitespace
-        xml = xml.trim();
-        // Insert line breaks
-        let formatted = "";
-        const reg = /(>)(<)(\/*)/g;
-        xml = xml.replace(reg, "$1\n$2$3");
-        let pad = 0;
-        xml.split("\n").forEach((node) => {
-            let indent = 0;
-            if (node.match(/.+<\/\w[^>]*>$/)) {
-                indent = 0;
-            } else if (node.match(/^<\/\w/)) {
-                if (pad !== 0) pad -= 1;
-            } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
-                indent = 1;
-            } else {
-                indent = 0;
-            }
-            formatted += "  ".repeat(pad) + node + "\n";
-            pad += indent;
-        });
-        return formatted.trim();
+    // Helper to base64 encode Unicode strings
+    function base64EncodeUnicode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
     }
+
+    // Handler for "Preview Rendered Notice"
+    const handleRenderPreview = async () => {
+        setRenderLoading(true);
+        setRenderError("");
+        setRenderHtml("");
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    noticeXml: fileContent,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const html = await response.text();
+            setRenderHtml(html);
+        } catch (err) {
+            setRenderError("Failed to render notice: " + err.message);
+        }
+        setRenderLoading(false);
+        setRenderDialogOpen(true);
+    };
+
+    // Handler for Validate Notice button (step 4)
+    const handleValidateNotice = async () => {
+        try {
+            const response = await fetch("http://localhost:4420/api/v1/validate-notice", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    noticeXml: patchedXml,
+                }),
+            });
+            const xml = await response.text();
+            // Log first 50 chars and status code
+            console.log(
+                `[Validate Notice] Status: ${response.status}, Body: ${xml.slice(0, 50)}${xml.length > 50 ? "..." : ""}`
+            );
+        } catch (err) {
+            console.log("[Validate Notice] Error:", err);
+        }
+    };
 
     return (
         <div className="homepage-container">
-            <h1>eForms GPP</h1>
+            <h1>eForms GPP Tool</h1>
             <div className="logo-area">
                 <img src={reactLogo} alt="App Logo" className="app-logo" />
             </div>
@@ -277,12 +311,13 @@ function App() {
                                     mx: "auto",
                                     textAlign: "center",
                                     fontWeight: 400,
-                                    color: "#888",
+                                    color: "#b0b0b0", // lighter gray for the label
                                     fontSize: "0.95rem",
                                     letterSpacing: 1,
                                 }}
                             >
-                                Preview:
+                                <Box sx={{ height: 40 }} />
+                                Raw XML Preview:
                             </Box>
                             <Box
                                 sx={{
@@ -298,53 +333,126 @@ function App() {
                                     overflowX: "auto",
                                     border: "1px solid #e0e0e0",
                                     textAlign: "left",
+                                    maxHeight: 160,
+                                    overflowY: "auto",
                                 }}
                             >
                                 <pre
                                     style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
                                     dangerouslySetInnerHTML={{
-                                        __html:
-                                            fileSnippet
-                                                .replace(/&/g, "&amp;")
-                                                .replace(/</g, "&lt;")
-                                                .replace(/>/g, "&gt;")
-                                                // Highlight comments
-                                                .replace(
-                                                    /(&lt;!--[\s\S]*?--&gt;)/g,
-                                                    '<span style="color:#999;">$1</span>'
-                                                )
-                                                // Highlight tags and attributes
-                                                .replace(
-                                                    /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
-                                                    function (_, open, tag, attrs, close) {
-                                                        // Highlight attributes and values
-                                                        const attrsHighlighted = attrs.replace(
-                                                            /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
-                                                            '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
-                                                        );
-                                                        return (
-                                                            '<span style="color:#1976d2;">' +
-                                                            open +
-                                                            tag +
-                                                            "</span>" +
-                                                            attrsHighlighted +
-                                                            '<span style="color:#1976d2;">' +
-                                                            close +
-                                                            "</span>"
-                                                        );
-                                                    }
-                                                ) +
-                                            (fileSnippet.length === SNIPPET_LENGTH
-                                                ? `<br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span><br/><span style="color:#888; font-size:0.6rem;">...</span>`
-                                                : ""),
+                                        __html: fileContent
+                                            .replace(/&/g, "&amp;")
+                                            .replace(/</g, "&lt;")
+                                            .replace(/>/g, "&gt;")
+                                            // Highlight comments
+                                            .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#999;">$1</span>')
+                                            // Highlight tags and attributes
+                                            .replace(
+                                                /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                                function (_, open, tag, attrs, close) {
+                                                    // Highlight attributes and values
+                                                    const attrsHighlighted = attrs.replace(
+                                                        /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                        '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                                    );
+                                                    return (
+                                                        '<span style="color:#1976d2;">' +
+                                                        open +
+                                                        tag +
+                                                        "</span>" +
+                                                        attrsHighlighted +
+                                                        '<span style="color:#1976d2;">' +
+                                                        close +
+                                                        "</span>"
+                                                    );
+                                                }
+                                            ),
                                     }}
                                 />
                             </Box>
-                            <Button variant="contained" color="success" sx={{ mt: 2 }} onClick={handleAnalyzeNotice}>
-                                Analyze Notice
-                            </Button>
+                            {/* Preview Rendered Notice button - complementary action */}
+                            <Box sx={{ height: 40 }} />
+                            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={!fileContent || renderLoading}
+                                    onClick={handleRenderPreview}
+                                    sx={{
+                                        borderColor: "#b0b0b0",
+                                        color: "#1976d2",
+                                        background: "#f5fafd",
+                                        "&:hover": {
+                                            background: "#e3f1fb",
+                                            borderColor: "#1976d2",
+                                        },
+                                    }}
+                                >
+                                    {renderLoading ? (
+                                        <>
+                                            <CircularProgress size={18} sx={{ mr: 1 }} />
+                                            Rendering...
+                                        </>
+                                    ) : (
+                                        "Preview Rendered Notice"
+                                    )}
+                                </Button>
+                            </Box>
+                            <Box sx={{ height: 80 }} />
+                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                <Button variant="contained" color="success" onClick={handleAnalyzeNotice}>
+                                    Analyze Notice
+                                </Button>
+                            </Box>
                         </>
                     )}
+                    {/* Rendered Notice Dialog */}
+                    <Dialog
+                        open={renderDialogOpen}
+                        onClose={() => setRenderDialogOpen(false)}
+                        maxWidth="lg"
+                        fullWidth
+                        PaperProps={{ sx: { background: "#fff" } }}
+                    >
+                        <DialogTitle>Rendered Notice Preview</DialogTitle>
+                        <DialogContent
+                            dividers
+                            sx={{
+                                minHeight: 300,
+                                maxHeight: 700,
+                                overflow: "auto",
+                                background: "#fff",
+                                p: 0,
+                            }}
+                        >
+                            {renderLoading ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 300,
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            ) : renderError ? (
+                                <Alert severity="error" sx={{ m: 2 }}>
+                                    {renderError}
+                                </Alert>
+                            ) : renderHtml ? (
+                                <div
+                                    style={{ width: "100%", height: "100%" }}
+                                    dangerouslySetInnerHTML={{ __html: renderHtml }}
+                                />
+                            ) : (
+                                <Typography sx={{ m: 2, color: "#888" }}>No preview available.</Typography>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
                 </>
             ) : step === 1 ? (
                 <Box sx={{ maxWidth: 700, mx: "auto", mt: 4 }}>
@@ -910,16 +1018,146 @@ function App() {
             {/* Review & Download Step */}
             {step === 3 && (
                 <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-                    <h2>Review Diff</h2>
-                    <Typography sx={{ mb: 2 }}>
-                        Click to see a comparison between your original notice and the patched notice.
-                    </Typography>
-                    <Button variant="outlined" color="primary" sx={{ mb: 3 }} onClick={() => setDiffModalOpen(true)}>
-                        Show Diff Viewer
-                    </Button>
-
+                    {/* Raw XML Preview for Patched Notice */}
+                    <Box
+                        sx={{
+                            mt: 2,
+                            maxWidth: 500,
+                            mx: "auto",
+                            textAlign: "center",
+                            fontWeight: 400,
+                            color: "#b0b0b0",
+                            fontSize: "0.95rem",
+                            letterSpacing: 1,
+                        }}
+                    >
+                        Raw XML Preview (Patched Notice):
+                    </Box>
+                    <Box
+                        sx={{
+                            mt: 0.5,
+                            maxWidth: 500,
+                            mx: "auto",
+                            background: "#f8f8f8",
+                            borderRadius: 1,
+                            p: 2,
+                            fontFamily: "monospace",
+                            fontSize: "0.4rem",
+                            color: "#444",
+                            overflowX: "auto",
+                            border: "1px solid #e0e0e0",
+                            textAlign: "left",
+                            maxHeight: 160,
+                            overflowY: "auto",
+                        }}
+                    >
+                        <pre
+                            style={{ margin: 0, whiteSpace: "pre-wrap", textAlign: "left" }}
+                            dangerouslySetInnerHTML={{
+                                __html: patchedXml
+                                    .replace(/&/g, "&amp;")
+                                    .replace(/</g, "&lt;")
+                                    .replace(/>/g, "&gt;")
+                                    // Highlight comments
+                                    .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#999;">$1</span>')
+                                    // Highlight tags and attributes
+                                    .replace(
+                                        /(&lt;\/?)([a-zA-Z0-9\-\:]+)((?:\s+[a-zA-Z0-9\-\:]+="[^"]*")*)(\s*\/?&gt;)/g,
+                                        function (_, open, tag, attrs, close) {
+                                            // Highlight attributes and values
+                                            const attrsHighlighted = attrs.replace(
+                                                /([a-zA-Z0-9\-\:]+)=("[^"]*")/g,
+                                                '<span style="color:#008000;">$1</span>=<span style="color:#b75501;">$2</span>'
+                                            );
+                                            return (
+                                                '<span style="color:#1976d2;">' +
+                                                open +
+                                                tag +
+                                                "</span>" +
+                                                attrsHighlighted +
+                                                '<span style="color:#1976d2;">' +
+                                                close +
+                                                "</span>"
+                                            );
+                                        }
+                                    ),
+                            }}
+                        />
+                    </Box>
+                    {/* Preview Rendered Notice button for Patched Notice */}
+                    <Box sx={{ height: 40 }} />
+                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            disabled={!patchedXml || renderLoading}
+                            onClick={async () => {
+                                setRenderLoading(true);
+                                setRenderError("");
+                                setRenderHtml("");
+                                try {
+                                    const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                            noticeXml: patchedXml,
+                                        }),
+                                    });
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP ${response.status}`);
+                                    }
+                                    const html = await response.text();
+                                    setRenderHtml(html);
+                                } catch (err) {
+                                    setRenderError("Failed to render notice: " + err.message);
+                                }
+                                setRenderLoading(false);
+                                setRenderDialogOpen(true);
+                            }}
+                            sx={{
+                                borderColor: "#b0b0b0",
+                                color: "#1976d2",
+                                background: "#f5fafd",
+                                "&:hover": {
+                                    background: "#e3f1fb",
+                                    borderColor: "#1976d2",
+                                },
+                            }}
+                        >
+                            {renderLoading ? (
+                                <>
+                                    <CircularProgress size={18} sx={{ mr: 1 }} />
+                                    Rendering...
+                                </>
+                            ) : (
+                                "Preview Rendered Notice"
+                            )}
+                        </Button>
+                    </Box>
+                    <Box sx={{ height: 40 }} />
+                    {/* Validate Notice button */}
+                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                        <Button
+                            variant="outlined"
+                            disabled={!patchedXml}
+                            onClick={handleValidateNotice}
+                            sx={{
+                                borderColor: "#ff9800",
+                                color: "#ff9800",
+                                background: "#fff8e1",
+                                "&:hover": {
+                                    background: "#ffe0b2",
+                                    borderColor: "#fb8c00",
+                                },
+                            }}
+                        >
+                            Validate Notice
+                        </Button>
+                    </Box>
+                    <Box sx={{ height: 80 }} />
                     {/* Download Patched Notice Section */}
-                    <h2>Download Patched Notice</h2>
                     <Button
                         variant="contained"
                         color="success"
@@ -941,73 +1179,51 @@ function App() {
                     >
                         Download Patched Notice
                     </Button>
-
-                    {/* Diff Viewer Modal */}
+                    {/* Rendered Notice Dialog (shared for both original and patched) */}
                     <Dialog
-                        open={diffModalOpen}
-                        onClose={() => setDiffModalOpen(false)}
+                        open={renderDialogOpen}
+                        onClose={() => setRenderDialogOpen(false)}
                         maxWidth="lg"
                         fullWidth
-                        PaperProps={{
-                            sx: {
-                                background: "#f8f8f8",
-                                borderRadius: 2,
-                                p: 2,
-                            },
-                        }}
+                        PaperProps={{ sx: { background: "#fff" } }}
                     >
-                        <DialogTitle>XML Diff Viewer</DialogTitle>
+                        <DialogTitle>Rendered Notice Preview</DialogTitle>
                         <DialogContent
                             dividers
                             sx={{
-                                p: 0,
-                                background: "#f8f8f8",
                                 minHeight: 300,
-                                maxHeight: 600,
+                                maxHeight: 700,
                                 overflow: "auto",
+                                background: "#fff",
+                                p: 0,
                             }}
                         >
-                            <div
-                                style={{
-                                    fontFamily: "monospace",
-                                    fontSize: "0.75rem",
-                                    lineHeight: 1.2,
-                                    maxHeight: 550,
-                                    overflow: "auto",
-                                }}
-                            >
-                                <ReactDiffViewer
-                                    oldValue={formatXml(fileContent)}
-                                    newValue={formatXml(patchedXml)}
-                                    splitView={true}
-                                    leftTitle="Original Notice"
-                                    rightTitle="Patched Notice"
-                                    styles={{
-                                        variables: {
-                                            light: {
-                                                diffViewerBackground: "#f8f8f8",
-                                            },
-                                        },
-                                        diffContainer: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                            maxHeight: 550,
-                                            overflow: "auto",
-                                        },
-                                        contentText: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                        },
-                                        line: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                        },
+                            {renderLoading ? (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 300,
                                     }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            ) : renderError ? (
+                                <Alert severity="error" sx={{ m: 2 }}>
+                                    {renderError}
+                                </Alert>
+                            ) : renderHtml ? (
+                                <div
+                                    style={{ width: "100%", height: "100%" }}
+                                    dangerouslySetInnerHTML={{ __html: renderHtml }}
                                 />
-                            </div>
+                            ) : (
+                                <Typography sx={{ m: 2, color: "#888" }}>No preview available.</Typography>
+                            )}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setDiffModalOpen(false)}>Close</Button>
+                            <Button onClick={() => setRenderDialogOpen(false)}>Close</Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
