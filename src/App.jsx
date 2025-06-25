@@ -52,6 +52,11 @@ function App() {
     const [renderLoading, setRenderLoading] = useState(false);
     const [renderError, setRenderError] = useState("");
 
+    // Add these new states for validation
+    const [validationDialogOpen, setValidationDialogOpen] = useState(false);
+    const [validationResult, setValidationResult] = useState(null);
+    const [validationLoading, setValidationLoading] = useState(false);
+
     const SNIPPET_LENGTH = 2000;
 
     const handleFileChange = (e) => {
@@ -234,8 +239,13 @@ function App() {
         setRenderDialogOpen(true);
     };
 
-    // Handler for Validate Notice button (step 4)
+    // Updated Handler for Validate Notice button (step 4)
     const handleValidateNotice = async () => {
+        if (!patchedXml) return;
+
+        setValidationLoading(true);
+        setValidationResult(null);
+
         try {
             const response = await fetch("http://localhost:4420/api/v1/validate-notice", {
                 method: "POST",
@@ -246,14 +256,61 @@ function App() {
                     noticeXml: patchedXml,
                 }),
             });
-            const xml = await response.text();
-            // Log first 50 chars and status code
-            console.log(
-                `[Validate Notice] Status: ${response.status}, Body: ${xml.slice(0, 50)}${xml.length > 50 ? "..." : ""}`
-            );
+
+            if (!response.ok) {
+                // This is an actual request failure
+                const errorText = await response.text();
+                setValidationResult({
+                    success: false,
+                    status: response.status,
+                    data: { message: `Request failed: ${errorText}` },
+                    rawResponse: errorText,
+                });
+            } else {
+                // Request succeeded, parse the validation result
+                const responseData = await response.json();
+
+                setValidationResult({
+                    success: responseData.validationStatus === 200,
+                    status: responseData.validationStatus,
+                    data: responseData,
+                    rawResponse: null,
+                });
+            }
         } catch (err) {
-            console.log("[Validate Notice] Error:", err);
+            setValidationResult({
+                success: false,
+                status: null,
+                data: { message: "Network error: " + err.message },
+                rawResponse: null,
+            });
         }
+
+        setValidationLoading(false);
+        setValidationDialogOpen(true);
+    };
+
+    const handleValidationDialogClose = () => {
+        setValidationDialogOpen(false);
+        setValidationResult(null);
+    };
+
+    const handleDownloadValidationReport = () => {
+        if (!validationResult?.data?.validationReport && !validationResult?.rawResponse) return;
+
+        // Use validation report if available, otherwise use raw response
+        const reportContent = validationResult.data.validationReport || validationResult.rawResponse;
+        const blob = new Blob([reportContent], { type: "application/xml" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "validation-report.xml";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 0);
     };
 
     return (
@@ -1141,7 +1198,7 @@ function App() {
                     <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                         <Button
                             variant="outlined"
-                            disabled={!patchedXml}
+                            disabled={!patchedXml || validationLoading}
                             onClick={handleValidateNotice}
                             sx={{
                                 borderColor: "#ff9800",
@@ -1153,7 +1210,14 @@ function App() {
                                 },
                             }}
                         >
-                            Validate Notice
+                            {validationLoading ? (
+                                <>
+                                    <CircularProgress size={18} sx={{ mr: 1 }} />
+                                    Validating...
+                                </>
+                            ) : (
+                                "Validate Notice"
+                            )}
                         </Button>
                     </Box>
                     <Box sx={{ height: 80 }} />
@@ -1228,6 +1292,141 @@ function App() {
                     </Dialog>
                 </Box>
             )}
+
+            {/* Add Validation Result Dialog */}
+            <Dialog
+                open={validationDialogOpen}
+                onClose={handleValidationDialogClose}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{ sx: { background: "#d3d3d3" } }}
+            >
+                <DialogTitle>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                        Validation Result
+                        {validationResult && (
+                            <Alert severity={validationResult.success ? "success" : "error"} sx={{ ml: 2, py: 0 }}>
+                                {validationResult.success ? "Valid" : "Invalid"}
+                            </Alert>
+                        )}
+                    </Box>
+                </DialogTitle>
+                <DialogContent dividers>
+                    {validationResult && (
+                        <Box>
+                            {/* Validation Status */}
+                            <Typography sx={{ mb: 2 }}>
+                                <strong>Validation Status:</strong> {validationResult.status || "Network Error"}
+                            </Typography>
+
+                            {/* Summary - Show full summary content */}
+                            {validationResult.data?.summary && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Summary:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            border: "1px solid #e0e0e0",
+                                            maxHeight: 300,
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        <Typography
+                                            component="pre"
+                                            sx={{
+                                                whiteSpace: "pre-wrap",
+                                                fontFamily: "inherit",
+                                                margin: 0,
+                                                fontSize: "0.9rem",
+                                            }}
+                                        >
+                                            {validationResult.data.summary}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Message as fallback if no summary */}
+                            {!validationResult.data?.summary && validationResult.data?.message && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Message:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            border: "1px solid #e0e0e0",
+                                        }}
+                                    >
+                                        <Typography>{validationResult.data.message}</Typography>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Additional Details */}
+                            {validationResult.data?.details && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Details:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            fontFamily: "monospace",
+                                            fontSize: "0.85rem",
+                                            color: "#444",
+                                            border: "1px solid #e0e0e0",
+                                            maxHeight: 200,
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                                            {typeof validationResult.data.details === "string"
+                                                ? validationResult.data.details
+                                                : JSON.stringify(validationResult.data.details, null, 2)}
+                                        </pre>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Validation Report Preview (if available) */}
+                            {validationResult.data?.validationReport && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Validation Report Preview:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            fontFamily: "monospace",
+                                            fontSize: "0.8rem",
+                                            color: "#444",
+                                            border: "1px solid #e0e0e0",
+                                            maxHeight: 200,
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                                            {validationResult.data.validationReport.substring(0, 1000)}
+                                            {validationResult.data.validationReport.length > 1000 && "..."}
+                                        </pre>
+                                    </Box>
+                                </Box>
+                            )}
+                        </Box>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleValidationDialogClose}>Close</Button>
+                    {validationResult?.success && validationResult.data?.validationReport && (
+                        <Button variant="contained" color="primary" onClick={handleDownloadValidationReport}>
+                            Download Validation Report
+                        </Button>
+                    )}
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
