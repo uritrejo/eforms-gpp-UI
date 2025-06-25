@@ -910,14 +910,7 @@ function App() {
             {/* Review & Download Step */}
             {step === 3 && (
                 <Box sx={{ maxWidth: 900, mx: "auto", mt: 4 }}>
-                    <h2>Review Diff</h2>
-                    <Typography sx={{ mb: 2 }}>
-                        Click to see a comparison between your original notice and the patched notice.
-                    </Typography>
-                    <Button variant="outlined" color="primary" sx={{ mb: 3 }} onClick={() => setDiffModalOpen(true)}>
-                        Show Diff Viewer
-                    </Button>
-
+                    {/* Remove Review Diff and Diff Viewer Modal */}
                     {/* Download Patched Notice Section */}
                     <h2>Download Patched Notice</h2>
                     <Button
@@ -941,75 +934,6 @@ function App() {
                     >
                         Download Patched Notice
                     </Button>
-
-                    {/* Diff Viewer Modal */}
-                    <Dialog
-                        open={diffModalOpen}
-                        onClose={() => setDiffModalOpen(false)}
-                        maxWidth="lg"
-                        fullWidth
-                        PaperProps={{
-                            sx: {
-                                background: "#f8f8f8",
-                                borderRadius: 2,
-                                p: 2,
-                            },
-                        }}
-                    >
-                        <DialogTitle>XML Diff Viewer</DialogTitle>
-                        <DialogContent
-                            dividers
-                            sx={{
-                                p: 0,
-                                background: "#f8f8f8",
-                                minHeight: 300,
-                                maxHeight: 600,
-                                overflow: "auto",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    fontFamily: "monospace",
-                                    fontSize: "0.75rem",
-                                    lineHeight: 1.2,
-                                    maxHeight: 550,
-                                    overflow: "auto",
-                                }}
-                            >
-                                <ReactDiffViewer
-                                    oldValue={formatXml(fileContent)}
-                                    newValue={formatXml(patchedXml)}
-                                    splitView={true}
-                                    leftTitle="Original Notice"
-                                    rightTitle="Patched Notice"
-                                    styles={{
-                                        variables: {
-                                            light: {
-                                                diffViewerBackground: "#f8f8f8",
-                                            },
-                                        },
-                                        diffContainer: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                            maxHeight: 550,
-                                            overflow: "auto",
-                                        },
-                                        contentText: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                        },
-                                        line: {
-                                            fontSize: "0.75rem",
-                                            lineHeight: "1.2",
-                                        },
-                                    }}
-                                />
-                            </div>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setDiffModalOpen(false)}>Close</Button>
-                        </DialogActions>
-                    </Dialog>
                 </Box>
             )}
         </div>
