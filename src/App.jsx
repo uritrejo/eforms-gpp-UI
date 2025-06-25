@@ -408,14 +408,14 @@ function App() {
                                     mt: 0.5,
                                     maxWidth: 500,
                                     mx: "auto",
-                                    background: "#2d3748",
+                                    background: "#f8f8f8",
                                     borderRadius: 1,
                                     p: 2,
                                     fontFamily: "monospace",
                                     fontSize: "0.5rem",
-                                    color: "#e2e8f0",
+                                    color: "#444",
                                     overflowX: "auto",
-                                    border: "1px solid #4a5568",
+                                    border: "1px solid #e0e0e0",
                                     textAlign: "left",
                                     maxHeight: 160,
                                     overflowY: "auto",
@@ -607,8 +607,20 @@ function App() {
                                             <Box sx={{ mt: 1, textAlign: "right" }}>
                                                 <Button
                                                     size="small"
-                                                    variant="outlined"
-                                                    sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                    variant="contained"
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        textTransform: "none",
+                                                        fontSize: "0.85rem",
+                                                        background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                        color: "white",
+                                                        "&:hover": {
+                                                            background:
+                                                                "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                            transform: "translateY(-1px)",
+                                                            boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                        },
+                                                    }}
                                                     onClick={() => handleViewDetails(doc)}
                                                 >
                                                     View Details
@@ -699,8 +711,19 @@ function App() {
                                         >
                                             <Button
                                                 size="small"
-                                                variant="outlined"
-                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                variant="contained"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontSize: "0.85rem",
+                                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                    color: "white",
+                                                    "&:hover": {
+                                                        background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                        transform: "translateY(-1px)",
+                                                        boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                    },
+                                                }}
                                                 onClick={() => handleViewDetails(crit)}
                                             >
                                                 View Details
@@ -901,8 +924,19 @@ function App() {
                                         >
                                             <Button
                                                 size="small"
-                                                variant="outlined"
-                                                sx={{ borderRadius: 2, textTransform: "none", fontSize: "0.85rem" }}
+                                                variant="contained"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: "none",
+                                                    fontSize: "0.85rem",
+                                                    background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                                                    color: "white",
+                                                    "&:hover": {
+                                                        background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                                        transform: "translateY(-1px)",
+                                                        boxShadow: "0 3px 8px rgba(76, 175, 80, 0.3)",
+                                                    },
+                                                }}
                                                 onClick={() => handlePatchViewDetails(patch)}
                                             >
                                                 View Details
@@ -1124,10 +1158,18 @@ function App() {
                     <Button onClick={handlePatchDialogClose}>Close</Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={() => {
                             setPatchDialogOpen(false);
                             setStep(2); // Go to "Select Patches" step
+                        }}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
                         }}
                     >
                         Next: Select Patches
@@ -1157,10 +1199,18 @@ function App() {
                     <Button onClick={handleApplyDialogClose}>Close</Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={() => {
                             setApplyDialogOpen(false);
                             setStep(3); // Go to "Review & Download" step
+                        }}
+                        sx={{
+                            background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
+                            color: "white",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #388e3c 0%, #4caf50 100%)",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                            },
                         }}
                     >
                         Next: Review & Download
@@ -1190,14 +1240,14 @@ function App() {
                             mt: 0.5,
                             maxWidth: 500,
                             mx: "auto",
-                            background: "#2d3748",
+                            background: "#f8f8f8",
                             borderRadius: 1,
                             p: 2,
                             fontFamily: "monospace",
                             fontSize: "0.5rem",
-                            color: "#e2e8f0",
+                            color: "#444",
                             overflowX: "auto",
-                            border: "1px solid #4a5568",
+                            border: "1px solid #e0e0e0",
                             textAlign: "left",
                             maxHeight: 160,
                             overflowY: "auto",
