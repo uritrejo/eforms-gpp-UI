@@ -257,23 +257,26 @@ function App() {
                 }),
             });
 
-            const responseText = await response.text();
+            if (!response.ok) {
+                // This is an actual request failure
+                const errorText = await response.text();
+                setValidationResult({
+                    success: false,
+                    status: response.status,
+                    data: { message: `Request failed: ${errorText}` },
+                    rawResponse: errorText,
+                });
+            } else {
+                // Request succeeded, parse the validation result
+                const responseData = await response.json();
 
-            // Try to parse as JSON for structured response
-            let parsedResponse;
-            try {
-                parsedResponse = JSON.parse(responseText);
-            } catch {
-                // If not JSON, treat as plain text
-                parsedResponse = { message: responseText };
+                setValidationResult({
+                    success: responseData.validationStatus === 200,
+                    status: responseData.validationStatus,
+                    data: responseData,
+                    rawResponse: null,
+                });
             }
-
-            setValidationResult({
-                success: response.ok,
-                status: response.status,
-                data: parsedResponse,
-                rawResponse: responseText,
-            });
         } catch (err) {
             setValidationResult({
                 success: false,
@@ -1311,20 +1314,56 @@ function App() {
                 <DialogContent dividers>
                     {validationResult && (
                         <Box>
-                            {/* Status Information */}
+                            {/* Validation Status */}
                             <Typography sx={{ mb: 2 }}>
-                                <strong>Status:</strong> {validationResult.status || "Network Error"}
+                                <strong>Validation Status:</strong> {validationResult.status || "Network Error"}
                             </Typography>
 
-                            {/* Summary Message */}
-                            <Typography sx={{ mb: 2 }}>
-                                <strong>Summary:</strong>{" "}
-                                {validationResult.data?.message ||
-                                    validationResult.data?.summary ||
-                                    (validationResult.success
-                                        ? "Notice validation completed successfully."
-                                        : "Notice validation failed.")}
-                            </Typography>
+                            {/* Summary - Show full summary content */}
+                            {validationResult.data?.summary && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Summary:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            border: "1px solid #e0e0e0",
+                                            maxHeight: 300,
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        <Typography
+                                            component="pre"
+                                            sx={{
+                                                whiteSpace: "pre-wrap",
+                                                fontFamily: "inherit",
+                                                margin: 0,
+                                                fontSize: "0.9rem",
+                                            }}
+                                        >
+                                            {validationResult.data.summary}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* Message as fallback if no summary */}
+                            {!validationResult.data?.summary && validationResult.data?.message && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Message:</Typography>
+                                    <Box
+                                        sx={{
+                                            background: "#f8f8f8",
+                                            borderRadius: 1,
+                                            p: 2,
+                                            border: "1px solid #e0e0e0",
+                                        }}
+                                    >
+                                        <Typography>{validationResult.data.message}</Typography>
+                                    </Box>
+                                </Box>
+                            )}
 
                             {/* Additional Details */}
                             {validationResult.data?.details && (
@@ -1352,36 +1391,27 @@ function App() {
                                 </Box>
                             )}
 
-                            {/* Error Details for failed validations */}
-                            {!validationResult.success && validationResult.data?.errors && (
+                            {/* Validation Report Preview (if available) */}
+                            {validationResult.data?.validationReport && (
                                 <Box sx={{ mb: 2 }}>
-                                    <Typography sx={{ fontWeight: 600, mb: 1, color: "error.main" }}>
-                                        Validation Errors:
-                                    </Typography>
+                                    <Typography sx={{ fontWeight: 600, mb: 1 }}>Validation Report Preview:</Typography>
                                     <Box
                                         sx={{
-                                            background: "#fef2f2",
+                                            background: "#f8f8f8",
                                             borderRadius: 1,
                                             p: 2,
-                                            border: "1px solid #fecaca",
+                                            fontFamily: "monospace",
+                                            fontSize: "0.8rem",
+                                            color: "#444",
+                                            border: "1px solid #e0e0e0",
                                             maxHeight: 200,
                                             overflowY: "auto",
                                         }}
                                     >
-                                        {Array.isArray(validationResult.data.errors) ? (
-                                            <List dense>
-                                                {validationResult.data.errors.map((error, idx) => (
-                                                    <ListItem key={idx} sx={{ px: 0 }}>
-                                                        <ListItemText
-                                                            primary={error.message || error}
-                                                            secondary={error.line && `Line: ${error.line}`}
-                                                        />
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                        ) : (
-                                            <Typography>{validationResult.data.errors}</Typography>
-                                        )}
+                                        <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                                            {validationResult.data.validationReport.substring(0, 1000)}
+                                            {validationResult.data.validationReport.length > 1000 && "..."}
+                                        </pre>
                                     </Box>
                                 </Box>
                             )}
@@ -1390,12 +1420,11 @@ function App() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleValidationDialogClose}>Close</Button>
-                    {validationResult?.success &&
-                        (validationResult.data?.validationReport || validationResult.rawResponse) && (
-                            <Button variant="contained" color="primary" onClick={handleDownloadValidationReport}>
-                                Download Validation Report
-                            </Button>
-                        )}
+                    {validationResult?.success && validationResult.data?.validationReport && (
+                        <Button variant="contained" color="primary" onClick={handleDownloadValidationReport}>
+                            Download Validation Report
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </div>
