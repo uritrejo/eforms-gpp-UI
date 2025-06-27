@@ -50,6 +50,7 @@ function App() {
     const [renderHtml, setRenderHtml] = useState("");
     const [renderLoading, setRenderLoading] = useState(false);
     const [renderError, setRenderError] = useState("");
+    const [renderResult, setRenderResult] = useState(null); // New state for visualization response
 
     // Add these new states for validation
     const [validationDialogOpen, setValidationDialogOpen] = useState(false);
@@ -216,6 +217,7 @@ function App() {
         setRenderLoading(true);
         setRenderError("");
         setRenderHtml("");
+        setRenderResult(null);
         try {
             const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
                 method: "POST",
@@ -229,8 +231,13 @@ function App() {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
-            const html = await response.text();
-            setRenderHtml(html);
+            const responseData = await response.json();
+            setRenderResult(responseData);
+
+            // If visualization was successful, set the HTML
+            if (responseData.visualizationStatus === 200) {
+                setRenderHtml(responseData.noticeHtml);
+            }
         } catch (err) {
             setRenderError("Failed to render notice: " + err.message);
         }
@@ -292,6 +299,13 @@ function App() {
     const handleValidationDialogClose = () => {
         setValidationDialogOpen(false);
         setValidationResult(null);
+    };
+
+    const handleRenderDialogClose = () => {
+        setRenderDialogOpen(false);
+        setRenderResult(null);
+        setRenderHtml("");
+        setRenderError("");
     };
 
     const handleDownloadValidationReport = () => {
@@ -517,7 +531,7 @@ function App() {
                     {/* Rendered Notice Dialog */}
                     <Dialog
                         open={renderDialogOpen}
-                        onClose={() => setRenderDialogOpen(false)}
+                        onClose={handleRenderDialogClose}
                         maxWidth="lg"
                         fullWidth
                         PaperProps={{ sx: { background: "linear-gradient(135deg, #f8fff8 0%, #f0f8f0 100%)" } }}
@@ -548,6 +562,19 @@ function App() {
                                 <Alert severity="error" sx={{ m: 2 }}>
                                     {renderError}
                                 </Alert>
+                            ) : renderResult && renderResult.visualizationStatus !== 200 ? (
+                                <Box sx={{ m: 2 }}>
+                                    <Alert severity="error" sx={{ mb: 2 }}>
+                                        Visualization failed with status: {renderResult.visualizationStatus}
+                                    </Alert>
+                                    {renderResult.summary && (
+                                        <Typography variant="body1" sx={{ mt: 2, whiteSpace: "pre-wrap" }}>
+                                            <strong>Details:</strong>
+                                            <br />
+                                            {renderResult.summary}
+                                        </Typography>
+                                    )}
+                                </Box>
                             ) : renderHtml ? (
                                 <div
                                     style={{ width: "100%", height: "100%" }}
@@ -559,7 +586,7 @@ function App() {
                         </DialogContent>
                         <DialogActions>
                             <Button
-                                onClick={() => setRenderDialogOpen(false)}
+                                onClick={handleRenderDialogClose}
                                 sx={{
                                     color: "#d32f2f",
                                     "&:hover": {
@@ -1362,6 +1389,7 @@ function App() {
                                 setRenderLoading(true);
                                 setRenderError("");
                                 setRenderHtml("");
+                                setRenderResult(null);
                                 try {
                                     const response = await fetch("http://localhost:4420/api/v1/visualize-notice", {
                                         method: "POST",
@@ -1375,8 +1403,13 @@ function App() {
                                     if (!response.ok) {
                                         throw new Error(`HTTP ${response.status}`);
                                     }
-                                    const html = await response.text();
-                                    setRenderHtml(html);
+                                    const responseData = await response.json();
+                                    setRenderResult(responseData);
+
+                                    // If visualization was successful, set the HTML
+                                    if (responseData.visualizationStatus === 200) {
+                                        setRenderHtml(responseData.noticeHtml);
+                                    }
                                 } catch (err) {
                                     setRenderError("Failed to render notice: " + err.message);
                                 }
@@ -1489,7 +1522,7 @@ function App() {
                     {/* Rendered Notice Dialog (shared for both original and patched) */}
                     <Dialog
                         open={renderDialogOpen}
-                        onClose={() => setRenderDialogOpen(false)}
+                        onClose={handleRenderDialogClose}
                         maxWidth="lg"
                         fullWidth
                         PaperProps={{ sx: { background: "#fff" } }}
@@ -1520,6 +1553,19 @@ function App() {
                                 <Alert severity="error" sx={{ m: 2 }}>
                                     {renderError}
                                 </Alert>
+                            ) : renderResult && renderResult.visualizationStatus !== 200 ? (
+                                <Box sx={{ m: 2 }}>
+                                    <Alert severity="error" sx={{ mb: 2 }}>
+                                        Visualization failed with status: {renderResult.visualizationStatus}
+                                    </Alert>
+                                    {renderResult.summary && (
+                                        <Typography variant="body1" sx={{ mt: 2, whiteSpace: "pre-wrap" }}>
+                                            <strong>Details:</strong>
+                                            <br />
+                                            {renderResult.summary}
+                                        </Typography>
+                                    )}
+                                </Box>
                             ) : renderHtml ? (
                                 <div
                                     style={{ width: "100%", height: "100%" }}
@@ -1531,7 +1577,7 @@ function App() {
                         </DialogContent>
                         <DialogActions>
                             <Button
-                                onClick={() => setRenderDialogOpen(false)}
+                                onClick={handleRenderDialogClose}
                                 sx={{
                                     color: "#d32f2f",
                                     "&:hover": {
