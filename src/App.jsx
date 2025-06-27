@@ -88,9 +88,11 @@ function App() {
             const response = await fetch("http://localhost:4420/api/v1/analyze-notice", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/xml",
+                    "Content-Type": "application/json",
                 },
-                body: fileContent,
+                body: JSON.stringify({
+                    noticeXml: fileContent,
+                }),
             });
             const text = await response.text();
             setAnalyzeResponse(text);
