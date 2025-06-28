@@ -132,6 +132,8 @@ The API base URL is currently hardcoded in the application. To modify it, update
 
 ## 📝 License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 This project is part of a thesis work on Green Public Procurement and eForms integration.
 
 ## 🐛 Troubleshooting
