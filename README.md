@@ -5,7 +5,7 @@ The GPP User Interface (UI) provides an intuitive workflow that helps users iden
 The application is built around the functionalities exposed by the [GPP Service](https://github.com/uritrejo/eforms-gpp-service), which imports its key functionalities from the [GPP Library](https://github.com/uritrejo/eforms-gpp-library).
 All of these tools are built to work together but not only. Any of the pieces may be used to extend the features of any given e-Procurement platform.
 
-??++ TODO: add screenshot
+![Architecture Diagram](docs/images/system-arch-diagram.png)
 
 ## 🌱 Features
 
@@ -96,7 +96,7 @@ The application expects a GPP Service backend API running on `http://localhost:4
 3. Validate the notice for compliance
 4. Download the patched notice and validation reports
 
-??++ TODO: Add screenshot
+![Overview of Workflow](docs/images/steps-diagram.png)
 
 ## 🎨 UI Design
 
@@ -105,7 +105,7 @@ The application features a sustainability-focused design with:
 -   **Green color palette**: Reflecting environmental themes
 -   **Step-by-step workflow**: Clear progression through the GPP application process
 
-??++ TODO: ADD PICS
+![Home Screen of GPP UI](docs/images/home-screen.png)
 
 ## 🧪 Available Scripts
 
