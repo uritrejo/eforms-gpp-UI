@@ -5,6 +5,8 @@ The GPP User Interface (UI) provides an intuitive workflow that helps users iden
 The application is built around the functionalities exposed by the [GPP Service](https://github.com/uritrejo/eforms-gpp-service), which imports its key functionalities from the [GPP Library](https://github.com/uritrejo/eforms-gpp-library).
 All of these tools are built to work together but not only. Any of the pieces may be used to extend the features of any given e-Procurement platform.
 
+## High-level architecture diagram
+
 ![Architecture Diagram](docs/images/system-arch-diagram.png)
 
 ## 🌱 Features
