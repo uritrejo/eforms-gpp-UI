@@ -107,9 +107,15 @@ function App() {
         setDialogOpen(false);
     };
 
+    // Helper function to change step and scroll to top
+    const changeStep = (newStep) => {
+        setStep(newStep);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     const handleNextStep = () => {
         setDialogOpen(false);
-        setStep(1); // Move to "Select Criteria"
+        changeStep(1); // Move to "Select Criteria"
     };
 
     // Handler for viewing details
@@ -351,7 +357,7 @@ function App() {
             <p className="description">Identify GPP criteria and apply them to your eForm notice.</p>
             {/* Material UI Stepper */}
             <Box sx={{ width: "100%", mb: 3 }}>
-                <Tabs value={step} onChange={(_, newValue) => setStep(newValue)} centered variant="fullWidth">
+                <Tabs value={step} onChange={(_, newValue) => changeStep(newValue)} centered variant="fullWidth">
                     {steps.map((label, idx) => (
                         <Tab key={label} label={`STEP ${idx + 1}: ${label}`} />
                     ))}
@@ -1244,7 +1250,7 @@ function App() {
                         variant="contained"
                         onClick={() => {
                             setPatchDialogOpen(false);
-                            setStep(2); // Go to "Select Patches" step
+                            changeStep(2); // Go to "Select Patches" step
                         }}
                         sx={{
                             background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
@@ -1296,7 +1302,7 @@ function App() {
                         variant="contained"
                         onClick={() => {
                             setApplyDialogOpen(false);
-                            setStep(3); // Go to "Review & Download" step
+                            changeStep(3); // Go to "Review & Download" step
                         }}
                         sx={{
                             background: "linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)",
